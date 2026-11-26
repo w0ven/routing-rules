@@ -1,0 +1,20 @@
+# 其他海外 AI 服务补丁（与 MetaCubeX/geosite/perplexity + xai 合并）
++.meta.ai
++.metademolab.com
++.genspark.ai
++.manus.im
++.skywork.ai
++.mistral.ai
++.poe.com
++.openrouter.ai
++.midjourney.com
++.cursor.sh
++.cursor.com
++.cursorvm.com
++.topview.ai
++.tensor.art
++.syntx.ai
++.magnific.com
++.v0.dev
++.lovable.dev
++.bolt.new

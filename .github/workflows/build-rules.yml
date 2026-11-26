@@ -1,0 +1,104 @@
+name: Build Routing Rules
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "manifest.json"
+      - "sources/**"
+      - "scripts/**"
+      - ".github/workflows/build-rules.yml"
+  schedule:
+    # Daily at 04:00 UTC+8 (20:00 UTC)
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-routing-rules
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download Mihomo binary
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          URL=$(python3 - <<'PY'
+          import json, os, re, urllib.request
+          req = urllib.request.Request(
+              "https://api.github.com/repos/MetaCubeX/mihomo/releases/latest",
+              headers={
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+                  "User-Agent": "w0ven-routing-rules-actions",
+              },
+          )
+          with urllib.request.urlopen(req, timeout=20) as r:
+              data = json.load(r)
+          for asset in data.get("assets", []):
+              name = asset["name"]
+              if re.match(r"^mihomo-linux-amd64-compatible-v[\d.]+\.gz$", name):
+                  print(asset["browser_download_url"])
+                  break
+          else:
+              for asset in data.get("assets", []):
+                  name = asset["name"]
+                  if re.match(r"^mihomo-linux-amd64-v[\d.]+\.gz$", name):
+                      print(asset["browser_download_url"])
+                      break
+              else:
+                  raise SystemExit("No matching mihomo linux-amd64 asset found")
+          PY
+          )
+          echo "Downloading: $URL"
+          curl -fsSL "$URL" -o mihomo.gz
+          gzip -d mihomo.gz
+          chmod +x mihomo
+          ./mihomo -v
+
+      - name: Build rulesets (.mrs / .txt / .list)
+        run: |
+          python3 scripts/build.py --mihomo ./mihomo --out dist
+          ls -lh dist/mihomo/domain/ dist/mihomo/ip/
+
+      - name: Publish to release branch
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/release-branch
+          mkdir -p /tmp/release-branch
+          git -C /tmp/release-branch init -b release
+          git -C /tmp/release-branch remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
+          if git -C /tmp/release-branch fetch --depth=1 origin release 2>/dev/null; then
+            git -C /tmp/release-branch reset --hard origin/release
+          fi
+
+          rsync -av --delete --exclude='.git' dist/ /tmp/release-branch/
+
+          cd /tmp/release-branch
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No rule changes detected; skip pushing release branch."
+            exit 0
+          fi
+
+          git commit -m "chore(rules): update compiled rulesets ($(date -u '+%Y-%m-%d'))"
+          git push origin release

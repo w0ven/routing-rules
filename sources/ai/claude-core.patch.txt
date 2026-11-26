@@ -1,0 +1,24 @@
+# Claude 精简核心补丁（不含 accounts.google.com / sentry.io / intercom.io 等多站共用第三方域名）
++.anthropic.com
++.claude.ai
++.claude.com
++.clau.de
++.claudeusercontent.com
++.claudemcpcontent.com
++.claudemcpclient.com
++.claude.app
++.claude.new
++.claude.site
++.claudepages.dev
++.ant.dev
++.antspace.dev
++.anthropic.team
++.claude.dev
++.claudeacademy.com
++.claudestudio.com
++.chatbotclaude.com
+anthropic-com.ghost.io
+http-intake.logs.us5.datadoghq.com
+browser-intake-us5-datadoghq.com
+cdn.usefathom.com
++.d.aiip.si

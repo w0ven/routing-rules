@@ -1,0 +1,10 @@
+# Gemini / AI Studio / NotebookLM 补丁（与 MetaCubeX/geosite/google-gemini 合并，不污染常规 googleusercontent）
++.gemini.google.com
++.aistudio.google.com
++.notebooklm.google.com
++.bard.google.com
++.makersuite.google.com
++.generativelanguage.googleapis.com
+gemini-pa.googleapis.com
+aistudio-pa.clients6.google.com
+alkalimakersuite-pa.clients6.google.com

@@ -1,0 +1,13 @@
+# 通用技术与主机社区论坛（便于统一固定出口，减少 Cloudflare 5 秒盾）
++.nodeseek.com
++.nodeimage.com
++.deepflood.com
++.linux.do
++.v2ex.com
++.hostloc.com
++.lowendtalk.com
++.lowendspirit.com
++.reddit.com
++.redd.it
++.redditstatic.com
++.redditmedia.com

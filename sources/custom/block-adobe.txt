@@ -1,0 +1,5 @@
+# Adobe 验证与遥测域名屏蔽
++.adobe.com
++.adobedtm.com
++.adobe.io
++.omtrdc.net

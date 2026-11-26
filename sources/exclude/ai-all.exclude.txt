@@ -1,0 +1,1 @@
+# 在此列出需要从 ai-all 合集中剔除的域名（每行一条，格式同 patch：+.domain.com 或 domain.com）

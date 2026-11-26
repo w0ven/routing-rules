@@ -1,0 +1,196 @@
+{
+  "upstream_base": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/",
+  "rulesets": [
+    {
+      "name": "claude-core",
+      "type": "domain",
+      "description": "Claude 精简核心与内容域名（不含多站共用的第三方登录/监控域名）",
+      "upstreams": [
+        "geosite/anthropic.list"
+      ],
+      "patches": [
+        "sources/ai/claude-core.patch.txt"
+      ]
+    },
+    {
+      "name": "claude",
+      "type": "domain",
+      "description": "Claude 全生态防串出口域名（核心 + 内容 + 登录第三方 + 监控统计 + d.aiip.si）",
+      "upstreams": [
+        "geosite/anthropic.list"
+      ],
+      "patches": [
+        "sources/ai/claude.patch.txt"
+      ],
+      "classical_extra": [
+        "sources/ai/claude.classical.txt"
+      ]
+    },
+    {
+      "name": "claude-ip",
+      "type": "ipcidr",
+      "description": "Anthropic 官方公布的 IPv4 / IPv6 网段兜底",
+      "patches": [
+        "sources/ai/claude.ip.txt"
+      ]
+    },
+    {
+      "name": "chatgpt",
+      "type": "domain",
+      "description": "ChatGPT / OpenAI / Sora 全量域名",
+      "upstreams": [
+        "geosite/openai.list"
+      ],
+      "patches": [
+        "sources/ai/chatgpt.patch.txt"
+      ]
+    },
+    {
+      "name": "gemini",
+      "type": "domain",
+      "description": "Google Gemini / AI Studio / NotebookLM / Antigravity 域名",
+      "upstreams": [
+        "geosite/google-gemini.list"
+      ],
+      "patches": [
+        "sources/ai/gemini.patch.txt"
+      ]
+    },
+    {
+      "name": "ai-other",
+      "type": "domain",
+      "description": "其他海外 AI 服务（Perplexity / xAI Grok / Meta AI / Cursor / OpenRouter / Midjourney 等）",
+      "upstreams": [
+        "geosite/perplexity.list",
+        "geosite/xai.list"
+      ],
+      "patches": [
+        "sources/ai/ai-other.patch.txt"
+      ]
+    },
+    {
+      "name": "ai-all",
+      "type": "domain",
+      "description": "全部海外 AI 合集（Claude + ChatGPT + Gemini + 其他 AI + MetaCubeX category-ai-!cn）",
+      "include_sets": [
+        "claude",
+        "chatgpt",
+        "gemini",
+        "ai-other"
+      ],
+      "upstreams": [
+        "geosite/category-ai-!cn.list"
+      ],
+      "excludes": [
+        "sources/exclude/ai-all.exclude.txt"
+      ],
+      "classical_extra": [
+        "sources/ai/claude.classical.txt"
+      ]
+    },
+    {
+      "name": "forum",
+      "type": "domain",
+      "description": "通用技术与主机社区论坛（固定出口减少 Cloudflare 验证）",
+      "patches": [
+        "sources/custom/forum.txt"
+      ]
+    },
+    {
+      "name": "cn-direct-extra",
+      "type": "domain",
+      "description": "通用国内直连补充（抖音/字节国内 CDN + Steam 国内下载 CDN）",
+      "upstreams": [
+        "geosite/douyin.list"
+      ],
+      "patches": [
+        "sources/custom/cn-direct-extra.txt"
+      ]
+    },
+    {
+      "name": "game-epic",
+      "type": "domain",
+      "description": "Epic Games（替代停更的 blackmatrix7 Epic.list）",
+      "upstreams": [
+        "geosite/epicgames.list"
+      ]
+    },
+    {
+      "name": "game-ea",
+      "type": "domain",
+      "description": "EA Games（替代停更的 blackmatrix7 EA.list）",
+      "upstreams": [
+        "geosite/ea.list"
+      ]
+    },
+    {
+      "name": "game-blizzard",
+      "type": "domain",
+      "description": "Blizzard（替代停更的 blackmatrix7 Blizzard.list）",
+      "upstreams": [
+        "geosite/blizzard.list"
+      ]
+    },
+    {
+      "name": "game-ubisoft",
+      "type": "domain",
+      "description": "Ubisoft（替代停更的 blackmatrix7 UBI.list）",
+      "upstreams": [
+        "geosite/ubisoft.list"
+      ]
+    },
+    {
+      "name": "game-playstation",
+      "type": "domain",
+      "description": "PlayStation（替代停更的 blackmatrix7 PlayStation.list）",
+      "upstreams": [
+        "geosite/playstation.list"
+      ]
+    },
+    {
+      "name": "game-nintendo",
+      "type": "domain",
+      "description": "Nintendo（替代停更的 blackmatrix7 Nintendo.list）",
+      "upstreams": [
+        "geosite/nintendo.list"
+      ]
+    },
+    {
+      "name": "game-all",
+      "type": "domain",
+      "description": "六大海外游戏平台合集（Epic / EA / Blizzard / Ubisoft / PlayStation / Nintendo）",
+      "include_sets": [
+        "game-epic",
+        "game-ea",
+        "game-blizzard",
+        "game-ubisoft",
+        "game-playstation",
+        "game-nintendo"
+      ]
+    },
+    {
+      "name": "nvidia",
+      "type": "domain",
+      "description": "Nvidia（替代停更的 blackmatrix7 Nvidia.list）",
+      "upstreams": [
+        "geosite/nvidia.list"
+      ]
+    },
+    {
+      "name": "test-check",
+      "type": "domain",
+      "description": "通用 IP / 测速 / DNS 泄露检测域名（干净版，不含 challenges.cloudflare.com）",
+      "patches": [
+        "sources/custom/test-check.txt"
+      ]
+    },
+    {
+      "name": "block-adobe",
+      "type": "domain",
+      "description": "Adobe 验证与遥测域名屏蔽",
+      "patches": [
+        "sources/custom/block-adobe.txt"
+      ]
+    }
+  ]
+}

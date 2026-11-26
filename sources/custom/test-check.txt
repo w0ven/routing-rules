@@ -1,0 +1,23 @@
+# 通用 IP / 测速 / DNS 泄露检测站点（已排除 challenges.cloudflare.com，避免干扰正常验证）
++.aiip.si
++.ip.sb
++.ipinfo.io
++.ipcheck.im
++.ipw.cn
++.ipip.net
++.ping0.cc
++.bgp.he.net
++.bgp.tools
++.dnscheck.tools
++.browserleaks.com
++.ipleak.net
++.test-ipv6.com
++.whoer.net
++.scamalytics.com
++.fast.com
+speed.cloudflare.com
++.speedcheck.org
++.speedtest.net
++.speedtest.cn
++.whois.pconline.com.cn
++.yalala.com

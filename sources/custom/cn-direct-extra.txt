@@ -1,0 +1,42 @@
+# 通用国内直连补充：抖音/字节国内 CDN + Steam 国内下载 CDN
+# （与 MetaCubeX/geosite/douyin 合并；仅放通用公共域名，不含任何个人私域）
+
+# 抖音 / 字节跳动国内核心与 CDN
++.douyin.com
++.douyincdn.com
++.douyinpic.com
++.douyinstatic.com
++.douyinvod.com
++.douyinliving.com
++.douyinact.com
++.iesdouyin.com
++.amemv.com
++.snssdk.com
++.ctobsnssdk.com
++.zjcdn.com
++.byteimg.com
++.bytetos.com
++.bytecdntp.com
++.bytegoofy.com
++.bytedns.net
++.bytednsdoc.com
++.byted-static.com
++.bytedance.com
++.bytedanceapi.com
++.bytevcloudapi.com
++.bytegecko.com
++.zijieapi.com
++.ecombdimg.com
++.ecombdapi.com
++.pstatp.com
++.ixigua.com
++.volces.com
++.volccdn.com
++.volcvideo.com
+
+# Steam 游戏下载国内 CDN
+steamcdn-a.akamaihd.net
++.cm.steampowered.com
++.steamserver.net
++.steamcontent.com
++.steamusercontent.com
