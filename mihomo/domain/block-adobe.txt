@@ -1,0 +1,4 @@
++.adobe.com
++.adobedtm.com
++.adobe.io
++.omtrdc.net
