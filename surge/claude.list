@@ -1,6 +1,7 @@
 DOMAIN-SUFFIX,claude.ai
 DOMAIN-SUFFIX,claude.app
 DOMAIN-SUFFIX,anthropic.com
+DOMAIN,anthropic.auth0.com
 DOMAIN,browser-intake-us5-datadoghq.com
 DOMAIN-SUFFIX,chatbotclaude.com
 DOMAIN-SUFFIX,claude.com
@@ -14,6 +15,8 @@ DOMAIN,http-intake.logs.us5.datadoghq.com
 DOMAIN,accounts.google.com
 DOMAIN-SUFFIX,intercomassets.com
 DOMAIN-SUFFIX,intercomcdn.com
+DOMAIN-SUFFIX,modelcontextprotocol.com
+DOMAIN-SUFFIX,api.statsig.com
 DOMAIN,cdn.usefathom.com
 DOMAIN-SUFFIX,clau.de
 DOMAIN-SUFFIX,ant.dev
@@ -22,12 +25,17 @@ DOMAIN-SUFFIX,claude.dev
 DOMAIN-SUFFIX,claudepages.dev
 DOMAIN-SUFFIX,datadoghq.eu
 DOMAIN,anthropic-com.ghost.io
+DOMAIN,cdn.growthbook.io
 DOMAIN-SUFFIX,intercom.io
+DOMAIN-SUFFIX,modelcontextprotocol.io
 DOMAIN-SUFFIX,sentry.io
 DOMAIN,o1158394.ingest.us.sentry.io
 DOMAIN,servd-anthropic-website.b-cdn.net
+DOMAIN,anthropic.com.cdn.cloudflare.net
+DOMAIN-SUFFIX,modelcontextprotocol.net
 DOMAIN-SUFFIX,statsigapi.net
 DOMAIN-SUFFIX,claude.new
+DOMAIN-SUFFIX,modelcontextprotocol.org
 DOMAIN-SUFFIX,d.aiip.si
 DOMAIN-SUFFIX,claude.site
 DOMAIN-SUFFIX,anthropic.team

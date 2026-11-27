@@ -1,6 +1,7 @@
 +.claude.ai
 +.claude.app
 +.anthropic.com
+anthropic.auth0.com
 browser-intake-us5-datadoghq.com
 +.chatbotclaude.com
 +.claude.com
@@ -14,6 +15,8 @@ http-intake.logs.us5.datadoghq.com
 accounts.google.com
 +.intercomassets.com
 +.intercomcdn.com
++.modelcontextprotocol.com
++.api.statsig.com
 cdn.usefathom.com
 +.clau.de
 +.ant.dev
@@ -22,12 +25,17 @@ cdn.usefathom.com
 +.claudepages.dev
 +.datadoghq.eu
 anthropic-com.ghost.io
+cdn.growthbook.io
 +.intercom.io
++.modelcontextprotocol.io
 +.sentry.io
 o1158394.ingest.us.sentry.io
 servd-anthropic-website.b-cdn.net
+anthropic.com.cdn.cloudflare.net
++.modelcontextprotocol.net
 +.statsigapi.net
 +.claude.new
++.modelcontextprotocol.org
 +.d.aiip.si
 +.claude.site
 +.anthropic.team

@@ -33,6 +33,7 @@
 +.pplx.ai
 +.sider.ai
 +.skywork.ai
++.suno.ai
 +.syntx.ai
 +.tapnow.ai
 +.topview.ai
@@ -55,6 +56,12 @@
 ppl-ai-file-upload.s3.amazonaws.com
 +.anthropic.com
 +.anythingllm.com
++.apple-relay.apple.com
++.guzzoni.apple.com
+gspe1-ssl.ls.apple.com
++.client-api.arkoselabs.com
+openai-api.arkoselabs.com
+anthropic.auth0.com
 production-copilot-host-westus.webpubsub.azure.com
 browser-intake-datadoghq.com
 browser-intake-us5-datadoghq.com
@@ -71,6 +78,8 @@ browser-intake-us5-datadoghq.com
 +.claudestudio.com
 +.claudeusercontent.com
 +.gateway.ai.cloudflare.com
++.apple-relay.cloudflare.com
++.cp4.cloudflare.com
 pplx-res.cloudinary.com
 +.codeium.com
 +.codeiumdata.com
@@ -97,6 +106,7 @@ http-intake.logs.us5.datadoghq.com
 +.envato.com
 +.envato-static.com
 +.envatousercontent.com
++.apple-relay.fastly-edge.com
 +.githubcopilot.com
 copilot-workspace.githubnext.com
 copilot-proxy.githubusercontent.com
@@ -154,6 +164,7 @@ notebooklm-pa.googleapis.com
 +.metademolab.com
 +.copilot.microsoft.com
 +.midjourney.com
++.modelcontextprotocol.com
 +.nousresearch.com
 +.oaistatic.com
 +.oaistatsig.com
@@ -166,6 +177,8 @@ notebooklm-pa.googleapis.com
 openai.qualtrics.com
 +.sora.com
 +.spicywriter.com
++.api.statsig.com
++.suno.com
 cdn.usefathom.com
 +.windsurf.com
 +.stitch.withgoogle.com
@@ -198,8 +211,10 @@ ai.google.dev
 +.talkai.info
 +.elevenlabs.io
 anthropic-com.ghost.io
+cdn.growthbook.io
 +.intercom.io
 +.minimax.io
++.modelcontextprotocol.io
 +.notegpt.io
 +.sentry.io
 o33249.ingest.sentry.io
@@ -211,11 +226,13 @@ openaiapi-site.azureedge.net
 production-openaicom-storage.azureedge.net
 openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 servd-anthropic-website.b-cdn.net
+anthropic.com.cdn.cloudflare.net
 +.openai.com.cdn.cloudflare.net
 openaicom.imgix.net
 +.grazie.aws.intellij.net
 +.liveperson.net
 +.lpsnmedia.net
++.modelcontextprotocol.net
 +.novelai.net
 +.poecdn.net
 +.statsigapi.net
@@ -229,6 +246,8 @@ openaicomproductionae4b.blob.core.windows.net
 +.comfyci.org
 +.comfyregistry.org
 +.deepwiki.org
++.featuregates.org
++.modelcontextprotocol.org
 +.openai.org
 +.cursor.sh
 +.d.aiip.si

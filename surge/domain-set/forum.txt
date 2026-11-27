@@ -1,0 +1,12 @@
+.deepflood.com
+.hostloc.com
+.lowendspirit.com
+.lowendtalk.com
+.nodeimage.com
+.nodeseek.com
+.reddit.com
+.redditmedia.com
+.redditstatic.com
+.v2ex.com
+.linux.do
+.redd.it

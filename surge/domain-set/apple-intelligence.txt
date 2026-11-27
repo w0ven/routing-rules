@@ -1,0 +1,6 @@
+.apple-relay.apple.com
+.guzzoni.apple.com
+gspe1-ssl.ls.apple.com
+.apple-relay.cloudflare.com
+.cp4.cloudflare.com
+.apple-relay.fastly-edge.com

@@ -33,6 +33,7 @@ DOMAIN-SUFFIX,plannotator.ai
 DOMAIN-SUFFIX,pplx.ai
 DOMAIN-SUFFIX,sider.ai
 DOMAIN-SUFFIX,skywork.ai
+DOMAIN-SUFFIX,suno.ai
 DOMAIN-SUFFIX,syntx.ai
 DOMAIN-SUFFIX,tapnow.ai
 DOMAIN-SUFFIX,topview.ai
@@ -55,6 +56,12 @@ DOMAIN-SUFFIX,agentclientprotocol.com
 DOMAIN,ppl-ai-file-upload.s3.amazonaws.com
 DOMAIN-SUFFIX,anthropic.com
 DOMAIN-SUFFIX,anythingllm.com
+DOMAIN-SUFFIX,apple-relay.apple.com
+DOMAIN-SUFFIX,guzzoni.apple.com
+DOMAIN,gspe1-ssl.ls.apple.com
+DOMAIN-SUFFIX,client-api.arkoselabs.com
+DOMAIN,openai-api.arkoselabs.com
+DOMAIN,anthropic.auth0.com
 DOMAIN,production-copilot-host-westus.webpubsub.azure.com
 DOMAIN,browser-intake-datadoghq.com
 DOMAIN,browser-intake-us5-datadoghq.com
@@ -71,6 +78,8 @@ DOMAIN-SUFFIX,claudemcpcontent.com
 DOMAIN-SUFFIX,claudestudio.com
 DOMAIN-SUFFIX,claudeusercontent.com
 DOMAIN-SUFFIX,gateway.ai.cloudflare.com
+DOMAIN-SUFFIX,apple-relay.cloudflare.com
+DOMAIN-SUFFIX,cp4.cloudflare.com
 DOMAIN,pplx-res.cloudinary.com
 DOMAIN-SUFFIX,codeium.com
 DOMAIN-SUFFIX,codeiumdata.com
@@ -97,6 +106,7 @@ DOMAIN-SUFFIX,elevenlabsusercontent.com
 DOMAIN-SUFFIX,envato.com
 DOMAIN-SUFFIX,envato-static.com
 DOMAIN-SUFFIX,envatousercontent.com
+DOMAIN-SUFFIX,apple-relay.fastly-edge.com
 DOMAIN-SUFFIX,githubcopilot.com
 DOMAIN,copilot-workspace.githubnext.com
 DOMAIN,copilot-proxy.githubusercontent.com
@@ -154,6 +164,7 @@ DOMAIN-SUFFIX,metaaivm.com
 DOMAIN-SUFFIX,metademolab.com
 DOMAIN-SUFFIX,copilot.microsoft.com
 DOMAIN-SUFFIX,midjourney.com
+DOMAIN-SUFFIX,modelcontextprotocol.com
 DOMAIN-SUFFIX,nousresearch.com
 DOMAIN-SUFFIX,oaistatic.com
 DOMAIN-SUFFIX,oaistatsig.com
@@ -166,6 +177,8 @@ DOMAIN-SUFFIX,qoder.com
 DOMAIN,openai.qualtrics.com
 DOMAIN-SUFFIX,sora.com
 DOMAIN-SUFFIX,spicywriter.com
+DOMAIN-SUFFIX,api.statsig.com
+DOMAIN-SUFFIX,suno.com
 DOMAIN,cdn.usefathom.com
 DOMAIN-SUFFIX,windsurf.com
 DOMAIN-SUFFIX,stitch.withgoogle.com
@@ -198,8 +211,10 @@ DOMAIN-SUFFIX,manus.im
 DOMAIN-SUFFIX,talkai.info
 DOMAIN-SUFFIX,elevenlabs.io
 DOMAIN,anthropic-com.ghost.io
+DOMAIN,cdn.growthbook.io
 DOMAIN-SUFFIX,intercom.io
 DOMAIN-SUFFIX,minimax.io
+DOMAIN-SUFFIX,modelcontextprotocol.io
 DOMAIN-SUFFIX,notegpt.io
 DOMAIN-SUFFIX,sentry.io
 DOMAIN,o33249.ingest.sentry.io
@@ -211,11 +226,13 @@ DOMAIN,openaiapi-site.azureedge.net
 DOMAIN,production-openaicom-storage.azureedge.net
 DOMAIN,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 DOMAIN,servd-anthropic-website.b-cdn.net
+DOMAIN,anthropic.com.cdn.cloudflare.net
 DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net
 DOMAIN,openaicom.imgix.net
 DOMAIN-SUFFIX,grazie.aws.intellij.net
 DOMAIN-SUFFIX,liveperson.net
 DOMAIN-SUFFIX,lpsnmedia.net
+DOMAIN-SUFFIX,modelcontextprotocol.net
 DOMAIN-SUFFIX,novelai.net
 DOMAIN-SUFFIX,poecdn.net
 DOMAIN-SUFFIX,statsigapi.net
@@ -229,6 +246,8 @@ DOMAIN-SUFFIX,comfy.org
 DOMAIN-SUFFIX,comfyci.org
 DOMAIN-SUFFIX,comfyregistry.org
 DOMAIN-SUFFIX,deepwiki.org
+DOMAIN-SUFFIX,featuregates.org
+DOMAIN-SUFFIX,modelcontextprotocol.org
 DOMAIN-SUFFIX,openai.org
 DOMAIN-SUFFIX,cursor.sh
 DOMAIN-SUFFIX,d.aiip.si
