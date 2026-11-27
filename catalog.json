@@ -1,0 +1,892 @@
+{
+  "repo": {
+    "owner": "w0ven",
+    "name": "routing-rules",
+    "release_branch": "release"
+  },
+  "categories": [
+    {
+      "id": "ai",
+      "label": "AI 专用"
+    },
+    {
+      "id": "services",
+      "label": "常用服务"
+    },
+    {
+      "id": "media",
+      "label": "流媒体"
+    },
+    {
+      "id": "gaming",
+      "label": "游戏与硬件"
+    },
+    {
+      "id": "telegram-dc",
+      "label": "Telegram DC"
+    },
+    {
+      "id": "core",
+      "label": "基础与拦截"
+    }
+  ],
+  "stats": {
+    "rulesetCount": 47,
+    "moduleCount": 1,
+    "totalEntries": 146579
+  },
+  "modules": [
+    {
+      "id": "httpdns-block",
+      "name": "HTTPDNS拦截 (w0ven)",
+      "description": "精准拦截列明的国内 App HTTPDNS 解析服务与 IP 解析路径，防止绕过 Surge DNS 分流，保留普通 IP 正常访问（零远端脚本）",
+      "category": "网络与分流",
+      "version": "2026.11.28.1",
+      "notes": "纯 [Rule] + [Map Local]，零远端 JS 脚本，仅拦截明确列出的国内 App HTTPDNS 解析服务与路径，防止绕过 Surge DNS 分流。",
+      "path": "surge/modules/httpdns-block.sgmodule",
+      "lineCount": 96,
+      "sizeBytes": 7246,
+      "preview": "#!name=HTTPDNS拦截 (w0ven)\n#!desc=精准拦截列明的国内 App HTTPDNS 解析服务与 IP 解析路径，防止绕过 Surge DNS 分流，保留普通 IP 正常访问（零远端脚本）\n#!category=网络与分流\n#!version=2026.11.28.1\n\n[Rule]\nDOMAIN,yyapp-httpdns.gslb.yy.com,REJECT,extended-matching\nDOMAIN,union-httpdns.gslb.yy.com,REJECT,extended-matching\nDOMAIN,yuyin-httpdns.gslb.yy.com,REJECT,extended-matching\nDOMAIN,httpdns-v6.gslb.yy.com,REJECT,extended-matching\nDOMAIN,dns2.q2cdn.com,REJECT,extended-matching\nDOMAIN,dns.weixin.qq.com,REJECT,extended-matching\nDOMAIN,dns.weixin.qq.com.cn,REJECT,extended-matching\nDOMAIN,aedns.weixin.qq.com,REJECT,extended-matching\nDOMAIN,httpdns.kg.qq.com,REJECT,extended-matching\nDOMAIN,httpdns.browser.miui.com,REJECT,extended-matching\nDOMAIN,resolver.msg.xiaomi.net,REJECT,extended-matching\nDOMAIN,httpdns.alicdn.com,REJECT,extended-matching\nDOMAIN,httpdns-api.aliyuncs.com,REJECT,extended-matching\nDOMAIN,httpdns-sc.aliyuncs.com,REJECT,extended-matching\nDOMAIN,amdc.alipay.com,REJECT,extended-matching\nDOMAIN,ucdc.upaas.quark.cn,REJECT,extended-matching\nDOMAIN,httpdns.danuoyi.tbcache.com,REJECT,extended-matching\nDOMAIN,xpis-xcdn.youku.com,REJECT,extended-matching"
+    }
+  ],
+  "rulesets": [
+    {
+      "name": "claude-core",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "Claude",
+      "description": "Claude 精简核心与内容域名（不含多站共用的第三方登录/监控域名）",
+      "entries": 32,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/claude-core.txt",
+        "surge_domain_set": "surge/domain-set/claude-core.txt",
+        "mihomo_mrs": "mihomo/domain/claude-core.mrs",
+        "classical_list": "mihomo/classical/claude-core.list",
+        "surge_list": "surge/claude-core.list"
+      }
+    },
+    {
+      "name": "claude",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "Claude",
+      "description": "Claude 全生态防串出口域名（核心 + 内容 + 登录第三方 + 监控统计 + MCP + d.aiip.si；list 版含 datadog 与官方 IP）",
+      "entries": 41,
+      "extraEntries": 3,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/claude.txt",
+        "surge_domain_set": "surge/domain-set/claude.txt",
+        "mihomo_mrs": "mihomo/domain/claude.mrs",
+        "classical_list": "mihomo/classical/claude.list",
+        "surge_list": "surge/claude.list"
+      }
+    },
+    {
+      "name": "claude-ip",
+      "type": "ipcidr",
+      "category": "ai",
+      "defaultPolicy": "Claude",
+      "description": "Anthropic 官方公布的 IPv4 / IPv6 网段兜底",
+      "entries": 2,
+      "extraEntries": 0,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/ip/claude-ip.txt",
+        "mihomo_mrs": "mihomo/ip/claude-ip.mrs",
+        "classical_list": "mihomo/classical/claude-ip.list",
+        "surge_list": "surge/claude-ip.list"
+      }
+    },
+    {
+      "name": "chatgpt",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "ChatGPT",
+      "description": "ChatGPT / OpenAI / Sora / LiveKit / Arkose / Azure 静态资源全量域名",
+      "entries": 27,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/chatgpt.txt",
+        "surge_domain_set": "surge/domain-set/chatgpt.txt",
+        "mihomo_mrs": "mihomo/domain/chatgpt.mrs",
+        "classical_list": "mihomo/classical/chatgpt.list",
+        "surge_list": "surge/chatgpt.list"
+      }
+    },
+    {
+      "name": "gemini",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "Gemini",
+      "description": "Google Gemini / AI Studio / NotebookLM / Antigravity 域名",
+      "entries": 52,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/gemini.txt",
+        "surge_domain_set": "surge/domain-set/gemini.txt",
+        "mihomo_mrs": "mihomo/domain/gemini.mrs",
+        "classical_list": "mihomo/classical/gemini.list",
+        "surge_list": "surge/gemini.list"
+      }
+    },
+    {
+      "name": "apple-intelligence",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "Intelligence",
+      "description": "Apple Intelligence 专用域名（不含普通 iCloud）",
+      "entries": 6,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/apple-intelligence.txt",
+        "surge_domain_set": "surge/domain-set/apple-intelligence.txt",
+        "mihomo_mrs": "mihomo/domain/apple-intelligence.mrs",
+        "classical_list": "mihomo/classical/apple-intelligence.list",
+        "surge_list": "surge/apple-intelligence.list"
+      }
+    },
+    {
+      "name": "ai-other",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "Claude",
+      "description": "其他海外 AI 服务（Perplexity / xAI Grok / Meta AI / Copilot / Cursor / Windsurf / Groq / Suno / HuggingFace 等）",
+      "entries": 54,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/ai-other.txt",
+        "surge_domain_set": "surge/domain-set/ai-other.txt",
+        "mihomo_mrs": "mihomo/domain/ai-other.mrs",
+        "classical_list": "mihomo/classical/ai-other.list",
+        "surge_list": "surge/ai-other.list"
+      }
+    },
+    {
+      "name": "intelligence",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "Intelligence",
+      "description": "Apple Intelligence + 其他海外 AI 合集（适配 Surge Intelligence 策略组）",
+      "entries": 60,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/intelligence.txt",
+        "surge_domain_set": "surge/domain-set/intelligence.txt",
+        "mihomo_mrs": "mihomo/domain/intelligence.mrs",
+        "classical_list": "mihomo/classical/intelligence.list",
+        "surge_list": "surge/intelligence.list"
+      }
+    },
+    {
+      "name": "ai-all",
+      "type": "domain",
+      "category": "ai",
+      "defaultPolicy": "AI",
+      "description": "全部海外 AI 合集（Claude + ChatGPT + Gemini + Intelligence + MetaCubeX category-ai-!cn）",
+      "entries": 260,
+      "extraEntries": 3,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/ai-all.txt",
+        "surge_domain_set": "surge/domain-set/ai-all.txt",
+        "mihomo_mrs": "mihomo/domain/ai-all.mrs",
+        "classical_list": "mihomo/classical/ai-all.list",
+        "surge_list": "surge/ai-all.list"
+      }
+    },
+    {
+      "name": "speedtest",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Speedtest",
+      "description": "Ookla Speedtest 测速域名",
+      "entries": 20,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/speedtest.txt",
+        "surge_domain_set": "surge/domain-set/speedtest.txt",
+        "mihomo_mrs": "mihomo/domain/speedtest.mrs",
+        "classical_list": "mihomo/classical/speedtest.list",
+        "surge_list": "surge/speedtest.list"
+      }
+    },
+    {
+      "name": "apple-cn",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "DIRECT",
+      "description": "Apple 国内直连服务域名",
+      "entries": 165,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/apple-cn.txt",
+        "surge_domain_set": "surge/domain-set/apple-cn.txt",
+        "mihomo_mrs": "mihomo/domain/apple-cn.mrs",
+        "classical_list": "mihomo/classical/apple-cn.list",
+        "surge_list": "surge/apple-cn.list"
+      }
+    },
+    {
+      "name": "apple",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Apple",
+      "description": "Apple 全部服务域名",
+      "entries": 1666,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/apple.txt",
+        "surge_domain_set": "surge/domain-set/apple.txt",
+        "mihomo_mrs": "mihomo/domain/apple.mrs",
+        "classical_list": "mihomo/classical/apple.list",
+        "surge_list": "surge/apple.list"
+      }
+    },
+    {
+      "name": "github",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "GitHub",
+      "description": "GitHub 全量域名",
+      "entries": 66,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/github.txt",
+        "surge_domain_set": "surge/domain-set/github.txt",
+        "mihomo_mrs": "mihomo/domain/github.mrs",
+        "classical_list": "mihomo/classical/github.list",
+        "surge_list": "surge/github.list"
+      }
+    },
+    {
+      "name": "microsoft",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Microsoft",
+      "description": "Microsoft 全量域名",
+      "entries": 758,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/microsoft.txt",
+        "surge_domain_set": "surge/domain-set/microsoft.txt",
+        "mihomo_mrs": "mihomo/domain/microsoft.mrs",
+        "classical_list": "mihomo/classical/microsoft.list",
+        "surge_list": "surge/microsoft.list"
+      }
+    },
+    {
+      "name": "telegram",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Telegram",
+      "description": "Telegram 全量域名（list 版含官方 IP 段）",
+      "entries": 21,
+      "extraEntries": 12,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/telegram.txt",
+        "surge_domain_set": "surge/domain-set/telegram.txt",
+        "mihomo_mrs": "mihomo/domain/telegram.mrs",
+        "classical_list": "mihomo/classical/telegram.list",
+        "surge_list": "surge/telegram.list"
+      }
+    },
+    {
+      "name": "twitter",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Twitter(X)",
+      "description": "X / Twitter 全量域名",
+      "entries": 28,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/twitter.txt",
+        "surge_domain_set": "surge/domain-set/twitter.txt",
+        "mihomo_mrs": "mihomo/domain/twitter.mrs",
+        "classical_list": "mihomo/classical/twitter.list",
+        "surge_list": "surge/twitter.list"
+      }
+    },
+    {
+      "name": "discord",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Discord",
+      "description": "Discord 全量域名",
+      "entries": 28,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/discord.txt",
+        "surge_domain_set": "surge/domain-set/discord.txt",
+        "mihomo_mrs": "mihomo/domain/discord.mrs",
+        "classical_list": "mihomo/classical/discord.list",
+        "surge_list": "surge/discord.list"
+      }
+    },
+    {
+      "name": "crypto",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Crypto",
+      "description": "主流加密货币交易所（OKX / Binance / Bybit）",
+      "entries": 71,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/crypto.txt",
+        "surge_domain_set": "surge/domain-set/crypto.txt",
+        "mihomo_mrs": "mihomo/domain/crypto.mrs",
+        "classical_list": "mihomo/classical/crypto.list",
+        "surge_list": "surge/crypto.list"
+      }
+    },
+    {
+      "name": "google",
+      "type": "domain",
+      "category": "services",
+      "defaultPolicy": "Google",
+      "description": "Google 全家桶域名（list 版含 Google IP 段）",
+      "entries": 1079,
+      "extraEntries": 6915,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/google.txt",
+        "surge_domain_set": "surge/domain-set/google.txt",
+        "mihomo_mrs": "mihomo/domain/google.mrs",
+        "classical_list": "mihomo/classical/google.list",
+        "surge_list": "surge/google.list"
+      }
+    },
+    {
+      "name": "youtube",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "YouTube",
+      "description": "YouTube 全量域名",
+      "entries": 178,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/youtube.txt",
+        "surge_domain_set": "surge/domain-set/youtube.txt",
+        "mihomo_mrs": "mihomo/domain/youtube.mrs",
+        "classical_list": "mihomo/classical/youtube.list",
+        "surge_list": "surge/youtube.list"
+      }
+    },
+    {
+      "name": "netflix",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "Netflix",
+      "description": "Netflix 全量域名（list 版含官方 IP 段）",
+      "entries": 24,
+      "extraEntries": 122,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/netflix.txt",
+        "surge_domain_set": "surge/domain-set/netflix.txt",
+        "mihomo_mrs": "mihomo/domain/netflix.mrs",
+        "classical_list": "mihomo/classical/netflix.list",
+        "surge_list": "surge/netflix.list"
+      }
+    },
+    {
+      "name": "disney",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "Disney+",
+      "description": "Disney+ 全量域名",
+      "entries": 224,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/disney.txt",
+        "surge_domain_set": "surge/domain-set/disney.txt",
+        "mihomo_mrs": "mihomo/domain/disney.mrs",
+        "classical_list": "mihomo/classical/disney.list",
+        "surge_list": "surge/disney.list"
+      }
+    },
+    {
+      "name": "spotify",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "Spotify",
+      "description": "Spotify 全量域名",
+      "entries": 28,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/spotify.txt",
+        "surge_domain_set": "surge/domain-set/spotify.txt",
+        "mihomo_mrs": "mihomo/domain/spotify.mrs",
+        "classical_list": "mihomo/classical/spotify.list",
+        "surge_list": "surge/spotify.list"
+      }
+    },
+    {
+      "name": "tiktok",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "TikTok",
+      "description": "TikTok 国际版全量域名",
+      "entries": 40,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/tiktok.txt",
+        "surge_domain_set": "surge/domain-set/tiktok.txt",
+        "mihomo_mrs": "mihomo/domain/tiktok.mrs",
+        "classical_list": "mihomo/classical/tiktok.list",
+        "surge_list": "surge/tiktok.list"
+      }
+    },
+    {
+      "name": "bilibili",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "BiliBili",
+      "description": "BiliBili 全量域名",
+      "entries": 53,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/bilibili.txt",
+        "surge_domain_set": "surge/domain-set/bilibili.txt",
+        "mihomo_mrs": "mihomo/domain/bilibili.mrs",
+        "classical_list": "mihomo/classical/bilibili.list",
+        "surge_list": "surge/bilibili.list"
+      }
+    },
+    {
+      "name": "china-media",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "DIRECT",
+      "description": "中国大陆主流流媒体域名",
+      "entries": 461,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/china-media.txt",
+        "surge_domain_set": "surge/domain-set/china-media.txt",
+        "mihomo_mrs": "mihomo/domain/china-media.mrs",
+        "classical_list": "mihomo/classical/china-media.list",
+        "surge_list": "surge/china-media.list"
+      }
+    },
+    {
+      "name": "global-media",
+      "type": "domain",
+      "category": "media",
+      "defaultPolicy": "GlobalMedia",
+      "description": "国际流媒体与娱乐服务合集",
+      "entries": 2163,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/global-media.txt",
+        "surge_domain_set": "surge/domain-set/global-media.txt",
+        "mihomo_mrs": "mihomo/domain/global-media.mrs",
+        "classical_list": "mihomo/classical/global-media.list",
+        "surge_list": "surge/global-media.list"
+      }
+    },
+    {
+      "name": "steam",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Steam",
+      "description": "Steam 平台域名",
+      "entries": 61,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/steam.txt",
+        "surge_domain_set": "surge/domain-set/steam.txt",
+        "mihomo_mrs": "mihomo/domain/steam.mrs",
+        "classical_list": "mihomo/classical/steam.list",
+        "surge_list": "surge/steam.list"
+      }
+    },
+    {
+      "name": "game-epic",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Game",
+      "description": "Epic Games",
+      "entries": 30,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/game-epic.txt",
+        "surge_domain_set": "surge/domain-set/game-epic.txt",
+        "mihomo_mrs": "mihomo/domain/game-epic.mrs",
+        "classical_list": "mihomo/classical/game-epic.list",
+        "surge_list": "surge/game-epic.list"
+      }
+    },
+    {
+      "name": "game-ea",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Game",
+      "description": "EA Games",
+      "entries": 165,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/game-ea.txt",
+        "surge_domain_set": "surge/domain-set/game-ea.txt",
+        "mihomo_mrs": "mihomo/domain/game-ea.mrs",
+        "classical_list": "mihomo/classical/game-ea.list",
+        "surge_list": "surge/game-ea.list"
+      }
+    },
+    {
+      "name": "game-blizzard",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Game",
+      "description": "Blizzard",
+      "entries": 25,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/game-blizzard.txt",
+        "surge_domain_set": "surge/domain-set/game-blizzard.txt",
+        "mihomo_mrs": "mihomo/domain/game-blizzard.mrs",
+        "classical_list": "mihomo/classical/game-blizzard.list",
+        "surge_list": "surge/game-blizzard.list"
+      }
+    },
+    {
+      "name": "game-ubisoft",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Game",
+      "description": "Ubisoft",
+      "entries": 31,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/game-ubisoft.txt",
+        "surge_domain_set": "surge/domain-set/game-ubisoft.txt",
+        "mihomo_mrs": "mihomo/domain/game-ubisoft.mrs",
+        "classical_list": "mihomo/classical/game-ubisoft.list",
+        "surge_list": "surge/game-ubisoft.list"
+      }
+    },
+    {
+      "name": "game-playstation",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Game",
+      "description": "PlayStation",
+      "entries": 5,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/game-playstation.txt",
+        "surge_domain_set": "surge/domain-set/game-playstation.txt",
+        "mihomo_mrs": "mihomo/domain/game-playstation.mrs",
+        "classical_list": "mihomo/classical/game-playstation.list",
+        "surge_list": "surge/game-playstation.list"
+      }
+    },
+    {
+      "name": "game-nintendo",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Game",
+      "description": "Nintendo",
+      "entries": 124,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/game-nintendo.txt",
+        "surge_domain_set": "surge/domain-set/game-nintendo.txt",
+        "mihomo_mrs": "mihomo/domain/game-nintendo.mrs",
+        "classical_list": "mihomo/classical/game-nintendo.list",
+        "surge_list": "surge/game-nintendo.list"
+      }
+    },
+    {
+      "name": "game-all",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Game",
+      "description": "六大海外游戏平台合集（Epic / EA / Blizzard / Ubisoft / PlayStation / Nintendo）",
+      "entries": 380,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/game-all.txt",
+        "surge_domain_set": "surge/domain-set/game-all.txt",
+        "mihomo_mrs": "mihomo/domain/game-all.mrs",
+        "classical_list": "mihomo/classical/game-all.list",
+        "surge_list": "surge/game-all.list"
+      }
+    },
+    {
+      "name": "gamer-with-steam",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Gamer",
+      "description": "Steam + 六大海外游戏平台合集（适配 Surge Gamer 策略组）",
+      "entries": 441,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/gamer-with-steam.txt",
+        "surge_domain_set": "surge/domain-set/gamer-with-steam.txt",
+        "mihomo_mrs": "mihomo/domain/gamer-with-steam.mrs",
+        "classical_list": "mihomo/classical/gamer-with-steam.list",
+        "surge_list": "surge/gamer-with-steam.list"
+      }
+    },
+    {
+      "name": "nvidia",
+      "type": "domain",
+      "category": "gaming",
+      "defaultPolicy": "Nvidia",
+      "description": "Nvidia 全量域名",
+      "entries": 66,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/nvidia.txt",
+        "surge_domain_set": "surge/domain-set/nvidia.txt",
+        "mihomo_mrs": "mihomo/domain/nvidia.mrs",
+        "classical_list": "mihomo/classical/nvidia.list",
+        "surge_list": "surge/nvidia.list"
+      }
+    },
+    {
+      "name": "telegram-dc1",
+      "type": "ipcidr",
+      "category": "telegram-dc",
+      "defaultPolicy": "美国-智选",
+      "description": "Telegram DC1 / DC3 美东机房（AS59930 官方 IP 段；list 版附带 IP-ASN）",
+      "entries": 3,
+      "extraEntries": 1,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/ip/telegram-dc1.txt",
+        "mihomo_mrs": "mihomo/ip/telegram-dc1.mrs",
+        "classical_list": "mihomo/classical/telegram-dc1.list",
+        "surge_list": "surge/telegram-dc1.list"
+      }
+    },
+    {
+      "name": "telegram-dc2-4",
+      "type": "ipcidr",
+      "category": "telegram-dc",
+      "defaultPolicy": "欧洲出口",
+      "description": "Telegram DC2 / DC4 欧洲机房（AS62041 / AS211157 官方 IP 段；list 版附带 IP-ASN）",
+      "entries": 11,
+      "extraEntries": 2,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/ip/telegram-dc2-4.txt",
+        "mihomo_mrs": "mihomo/ip/telegram-dc2-4.mrs",
+        "classical_list": "mihomo/classical/telegram-dc2-4.list",
+        "surge_list": "surge/telegram-dc2-4.list"
+      }
+    },
+    {
+      "name": "telegram-dc5",
+      "type": "ipcidr",
+      "category": "telegram-dc",
+      "defaultPolicy": "新加坡-智选",
+      "description": "Telegram DC5 新加坡机房（AS44907 / AS62014 官方 IP 段；list 版附带 IP-ASN）",
+      "entries": 6,
+      "extraEntries": 2,
+      "noResolve": true,
+      "surgeRecommended": "rule-set",
+      "paths": {
+        "mihomo_txt": "mihomo/ip/telegram-dc5.txt",
+        "mihomo_mrs": "mihomo/ip/telegram-dc5.mrs",
+        "classical_list": "mihomo/classical/telegram-dc5.list",
+        "surge_list": "surge/telegram-dc5.list"
+      }
+    },
+    {
+      "name": "forum",
+      "type": "domain",
+      "category": "core",
+      "defaultPolicy": "社区论坛",
+      "description": "通用技术与主机社区论坛（固定出口减少 Cloudflare 验证）",
+      "entries": 12,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/forum.txt",
+        "surge_domain_set": "surge/domain-set/forum.txt",
+        "mihomo_mrs": "mihomo/domain/forum.mrs",
+        "classical_list": "mihomo/classical/forum.list",
+        "surge_list": "surge/forum.list"
+      }
+    },
+    {
+      "name": "cn-direct-extra",
+      "type": "domain",
+      "category": "core",
+      "defaultPolicy": "DIRECT",
+      "description": "通用国内直连补充（抖音/字节国内 CDN + Steam 国内下载 CDN）",
+      "entries": 98,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/cn-direct-extra.txt",
+        "surge_domain_set": "surge/domain-set/cn-direct-extra.txt",
+        "mihomo_mrs": "mihomo/domain/cn-direct-extra.mrs",
+        "classical_list": "mihomo/classical/cn-direct-extra.list",
+        "surge_list": "surge/cn-direct-extra.list"
+      }
+    },
+    {
+      "name": "httpdns-block",
+      "type": "domain",
+      "category": "core",
+      "defaultPolicy": "REJECT",
+      "description": "国内 App HTTPDNS 解析域名拦截（Mihomo/Surge 通用，不含普通业务域）",
+      "entries": 67,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/httpdns-block.txt",
+        "surge_domain_set": "surge/domain-set/httpdns-block.txt",
+        "mihomo_mrs": "mihomo/domain/httpdns-block.mrs",
+        "classical_list": "mihomo/classical/httpdns-block.list",
+        "surge_list": "surge/httpdns-block.list"
+      }
+    },
+    {
+      "name": "test-check",
+      "type": "domain",
+      "category": "core",
+      "defaultPolicy": "Test",
+      "description": "通用 IP / 测速 / DNS 泄露检测域名（干净版，不含 challenges.cloudflare.com）",
+      "entries": 22,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/test-check.txt",
+        "surge_domain_set": "surge/domain-set/test-check.txt",
+        "mihomo_mrs": "mihomo/domain/test-check.mrs",
+        "classical_list": "mihomo/classical/test-check.list",
+        "surge_list": "surge/test-check.list"
+      }
+    },
+    {
+      "name": "block-adobe",
+      "type": "domain",
+      "category": "core",
+      "defaultPolicy": "REJECT",
+      "description": "Adobe 验证与遥测域名屏蔽",
+      "entries": 4,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/block-adobe.txt",
+        "surge_domain_set": "surge/domain-set/block-adobe.txt",
+        "mihomo_mrs": "mihomo/domain/block-adobe.mrs",
+        "classical_list": "mihomo/classical/block-adobe.list",
+        "surge_list": "surge/block-adobe.list"
+      }
+    },
+    {
+      "name": "global",
+      "type": "domain",
+      "category": "core",
+      "defaultPolicy": "日常代理",
+      "description": "非中国大陆通用代理域名总集（MetaCubeX geolocation-!cn，Surge 建议使用 DOMAIN-SET）",
+      "entries": 27244,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/global.txt",
+        "surge_domain_set": "surge/domain-set/global.txt",
+        "mihomo_mrs": "mihomo/domain/global.mrs"
+      }
+    },
+    {
+      "name": "cn",
+      "type": "domain",
+      "category": "core",
+      "defaultPolicy": "DIRECT",
+      "description": "中国大陆直连域名总集（MetaCubeX cn，Surge 建议使用 DOMAIN-SET）",
+      "entries": 110177,
+      "extraEntries": 0,
+      "noResolve": false,
+      "surgeRecommended": "domain-set",
+      "paths": {
+        "mihomo_txt": "mihomo/domain/cn.txt",
+        "surge_domain_set": "surge/domain-set/cn.txt",
+        "mihomo_mrs": "mihomo/domain/cn.mrs"
+      }
+    }
+  ]
+}
