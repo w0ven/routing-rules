@@ -1,265 +1,316 @@
 {
   "upstream_base": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/",
+  "repo": {
+    "owner": "w0ven",
+    "name": "routing-rules",
+    "release_branch": "release"
+  },
+  "categories": [
+    { "id": "ai", "label": "AI 专用" },
+    { "id": "services", "label": "常用服务" },
+    { "id": "media", "label": "流媒体" },
+    { "id": "gaming", "label": "游戏与硬件" },
+    { "id": "telegram-dc", "label": "Telegram DC" },
+    { "id": "core", "label": "基础与拦截" }
+  ],
+  "modules": [
+    {
+      "id": "httpdns-block",
+      "source": "sources/modules/httpdns-block.sgmodule",
+      "filename": "httpdns-block.sgmodule",
+      "notes": "纯 [Rule] + [Map Local]，零远端 JS 脚本，仅拦截明确列出的国内 App HTTPDNS 解析服务与路径，防止绕过 Surge DNS 分流。"
+    }
+  ],
   "rulesets": [
     {
       "name": "claude-core",
       "type": "domain",
+      "category": "ai",
+      "default_policy": "Claude",
       "description": "Claude 精简核心与内容域名（不含多站共用的第三方登录/监控域名）",
-      "upstreams": [
-        "geosite/anthropic.list"
-      ],
-      "patches": [
-        "sources/ai/claude-core.patch.txt"
-      ]
+      "upstreams": ["geosite/anthropic.list"],
+      "patches": ["sources/ai/claude-core.patch.txt"]
     },
     {
       "name": "claude",
       "type": "domain",
-      "description": "Claude 全生态防串出口域名（核心 + 内容 + 登录第三方 + 监控统计 + d.aiip.si）",
-      "upstreams": [
-        "geosite/anthropic.list"
-      ],
-      "patches": [
-        "sources/ai/claude.patch.txt"
-      ],
-      "classical_extra": [
-        "sources/ai/claude.classical.txt"
-      ]
+      "category": "ai",
+      "default_policy": "Claude",
+      "description": "Claude 全生态防串出口域名（核心 + 内容 + 登录第三方 + 监控统计 + MCP + d.aiip.si；list 版含 datadog 与官方 IP）",
+      "upstreams": ["geosite/anthropic.list"],
+      "patches": ["sources/ai/claude.patch.txt"],
+      "classical_extra": ["sources/ai/claude.classical.txt"]
     },
     {
       "name": "claude-ip",
       "type": "ipcidr",
+      "category": "ai",
+      "default_policy": "Claude",
       "description": "Anthropic 官方公布的 IPv4 / IPv6 网段兜底",
-      "patches": [
-        "sources/ai/claude.ip.txt"
-      ]
+      "patches": ["sources/ai/claude.ip.txt"]
     },
     {
       "name": "chatgpt",
       "type": "domain",
-      "description": "ChatGPT / OpenAI / Sora 全量域名",
-      "upstreams": [
-        "geosite/openai.list"
-      ],
-      "patches": [
-        "sources/ai/chatgpt.patch.txt"
-      ]
+      "category": "ai",
+      "default_policy": "ChatGPT",
+      "description": "ChatGPT / OpenAI / Sora / LiveKit / Arkose / Azure 静态资源全量域名",
+      "upstreams": ["geosite/openai.list"],
+      "patches": ["sources/ai/chatgpt.patch.txt"]
     },
     {
       "name": "gemini",
       "type": "domain",
+      "category": "ai",
+      "default_policy": "Gemini",
       "description": "Google Gemini / AI Studio / NotebookLM / Antigravity 域名",
-      "upstreams": [
-        "geosite/google-gemini.list"
-      ],
-      "patches": [
-        "sources/ai/gemini.patch.txt"
-      ]
+      "upstreams": ["geosite/google-gemini.list"],
+      "patches": ["sources/ai/gemini.patch.txt"]
     },
     {
       "name": "apple-intelligence",
       "type": "domain",
+      "category": "ai",
+      "default_policy": "Intelligence",
       "description": "Apple Intelligence 专用域名（不含普通 iCloud）",
-      "patches": [
-        "sources/ai/apple-intelligence.txt"
-      ]
+      "patches": ["sources/ai/apple-intelligence.txt"]
     },
     {
       "name": "ai-other",
       "type": "domain",
+      "category": "ai",
+      "default_policy": "Claude",
       "description": "其他海外 AI 服务（Perplexity / xAI Grok / Meta AI / Copilot / Cursor / Windsurf / Groq / Suno / HuggingFace 等）",
-      "upstreams": [
-        "geosite/perplexity.list",
-        "geosite/xai.list"
-      ],
-      "patches": [
-        "sources/ai/ai-other.patch.txt"
-      ]
+      "upstreams": ["geosite/perplexity.list", "geosite/xai.list"],
+      "patches": ["sources/ai/ai-other.patch.txt"]
     },
     {
       "name": "intelligence",
       "type": "domain",
+      "category": "ai",
+      "default_policy": "Intelligence",
       "description": "Apple Intelligence + 其他海外 AI 合集（适配 Surge Intelligence 策略组）",
-      "include_sets": [
-        "apple-intelligence",
-        "ai-other"
-      ]
+      "include_sets": ["apple-intelligence", "ai-other"]
     },
     {
       "name": "ai-all",
       "type": "domain",
+      "category": "ai",
+      "default_policy": "AI",
       "description": "全部海外 AI 合集（Claude + ChatGPT + Gemini + Intelligence + MetaCubeX category-ai-!cn）",
-      "include_sets": [
-        "claude",
-        "chatgpt",
-        "gemini",
-        "intelligence"
-      ],
-      "upstreams": [
-        "geosite/category-ai-!cn.list"
-      ],
-      "excludes": [
-        "sources/exclude/ai-all.exclude.txt"
-      ],
-      "classical_extra": [
-        "sources/ai/claude.classical.txt"
-      ]
-    },
-    {
-      "name": "forum",
-      "type": "domain",
-      "description": "通用技术与主机社区论坛（固定出口减少 Cloudflare 验证）",
-      "patches": [
-        "sources/custom/forum.txt"
-      ]
-    },
-    {
-      "name": "cn-direct-extra",
-      "type": "domain",
-      "description": "通用国内直连补充（抖音/字节国内 CDN + Steam 国内下载 CDN）",
-      "upstreams": [
-        "geosite/douyin.list"
-      ],
-      "patches": [
-        "sources/custom/cn-direct-extra.txt"
-      ]
+      "include_sets": ["claude", "chatgpt", "gemini", "intelligence"],
+      "upstreams": ["geosite/category-ai-!cn.list"],
+      "excludes": ["sources/exclude/ai-all.exclude.txt"],
+      "classical_extra": ["sources/ai/claude.classical.txt"]
     },
     {
       "name": "speedtest",
       "type": "domain",
+      "category": "services",
+      "default_policy": "Speedtest",
       "description": "Ookla Speedtest 测速域名",
-      "upstreams": [
-        "geosite/ookla-speedtest.list"
-      ]
+      "upstreams": ["geosite/ookla-speedtest.list"]
     },
     {
       "name": "apple-cn",
       "type": "domain",
+      "category": "services",
+      "default_policy": "DIRECT",
       "description": "Apple 国内直连服务域名",
-      "upstreams": [
-        "geosite/apple-cn.list"
-      ]
+      "upstreams": ["geosite/apple-cn.list"]
     },
     {
       "name": "apple",
       "type": "domain",
+      "category": "services",
+      "default_policy": "Apple",
       "description": "Apple 全部服务域名",
-      "upstreams": [
-        "geosite/apple.list"
-      ]
+      "upstreams": ["geosite/apple.list"]
     },
     {
       "name": "github",
       "type": "domain",
+      "category": "services",
+      "default_policy": "GitHub",
       "description": "GitHub 全量域名",
-      "upstreams": [
-        "geosite/github.list"
-      ]
+      "upstreams": ["geosite/github.list"]
     },
     {
       "name": "microsoft",
       "type": "domain",
+      "category": "services",
+      "default_policy": "Microsoft",
       "description": "Microsoft 全量域名",
-      "upstreams": [
-        "geosite/microsoft.list"
-      ]
+      "upstreams": ["geosite/microsoft.list"]
     },
     {
       "name": "telegram",
       "type": "domain",
-      "description": "Telegram 全量域名（classical/surge 版含官方 IP 段）",
-      "upstreams": [
-        "geosite/telegram.list"
-      ],
-      "ip_upstreams": [
-        "geoip/telegram.list"
-      ]
+      "category": "services",
+      "default_policy": "Telegram",
+      "description": "Telegram 全量域名（list 版含官方 IP 段）",
+      "upstreams": ["geosite/telegram.list"],
+      "ip_upstreams": ["geoip/telegram.list"]
     },
     {
       "name": "twitter",
       "type": "domain",
+      "category": "services",
+      "default_policy": "Twitter(X)",
       "description": "X / Twitter 全量域名",
-      "upstreams": [
-        "geosite/x.list"
-      ]
+      "upstreams": ["geosite/x.list"]
     },
     {
       "name": "discord",
       "type": "domain",
+      "category": "services",
+      "default_policy": "Discord",
       "description": "Discord 全量域名",
-      "upstreams": [
-        "geosite/discord.list"
-      ]
+      "upstreams": ["geosite/discord.list"]
     },
     {
       "name": "crypto",
       "type": "domain",
+      "category": "services",
+      "default_policy": "Crypto",
       "description": "主流加密货币交易所（OKX / Binance / Bybit）",
-      "upstreams": [
-        "geosite/okx.list",
-        "geosite/binance.list",
-        "geosite/bybit.list"
-      ]
+      "upstreams": ["geosite/okx.list", "geosite/binance.list", "geosite/bybit.list"]
+    },
+    {
+      "name": "google",
+      "type": "domain",
+      "category": "services",
+      "default_policy": "Google",
+      "description": "Google 全家桶域名（list 版含 Google IP 段）",
+      "upstreams": ["geosite/google.list"],
+      "ip_upstreams": ["geoip/google.list"]
+    },
+    {
+      "name": "youtube",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "YouTube",
+      "description": "YouTube 全量域名",
+      "upstreams": ["geosite/youtube.list"]
+    },
+    {
+      "name": "netflix",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "Netflix",
+      "description": "Netflix 全量域名（list 版含官方 IP 段）",
+      "upstreams": ["geosite/netflix.list"],
+      "ip_upstreams": ["geoip/netflix.list"]
+    },
+    {
+      "name": "disney",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "Disney+",
+      "description": "Disney+ 全量域名",
+      "upstreams": ["geosite/disney.list"]
+    },
+    {
+      "name": "spotify",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "Spotify",
+      "description": "Spotify 全量域名",
+      "upstreams": ["geosite/spotify.list"]
+    },
+    {
+      "name": "tiktok",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "TikTok",
+      "description": "TikTok 国际版全量域名",
+      "upstreams": ["geosite/tiktok.list"]
+    },
+    {
+      "name": "bilibili",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "BiliBili",
+      "description": "BiliBili 全量域名",
+      "upstreams": ["geosite/bilibili.list"]
+    },
+    {
+      "name": "china-media",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "DIRECT",
+      "description": "中国大陆主流流媒体域名",
+      "upstreams": ["geosite/category-media-cn.list"]
+    },
+    {
+      "name": "global-media",
+      "type": "domain",
+      "category": "media",
+      "default_policy": "GlobalMedia",
+      "description": "国际流媒体与娱乐服务合集",
+      "upstreams": ["geosite/category-entertainment.list"]
     },
     {
       "name": "steam",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Steam",
       "description": "Steam 平台域名",
-      "upstreams": [
-        "geosite/steam.list"
-      ]
+      "upstreams": ["geosite/steam.list"]
     },
     {
       "name": "game-epic",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Game",
       "description": "Epic Games",
-      "upstreams": [
-        "geosite/epicgames.list"
-      ]
+      "upstreams": ["geosite/epicgames.list"]
     },
     {
       "name": "game-ea",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Game",
       "description": "EA Games",
-      "upstreams": [
-        "geosite/ea.list"
-      ]
+      "upstreams": ["geosite/ea.list"]
     },
     {
       "name": "game-blizzard",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Game",
       "description": "Blizzard",
-      "upstreams": [
-        "geosite/blizzard.list"
-      ]
+      "upstreams": ["geosite/blizzard.list"]
     },
     {
       "name": "game-ubisoft",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Game",
       "description": "Ubisoft",
-      "upstreams": [
-        "geosite/ubisoft.list"
-      ]
+      "upstreams": ["geosite/ubisoft.list"]
     },
     {
       "name": "game-playstation",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Game",
       "description": "PlayStation",
-      "upstreams": [
-        "geosite/playstation.list"
-      ]
+      "upstreams": ["geosite/playstation.list"]
     },
     {
       "name": "game-nintendo",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Game",
       "description": "Nintendo",
-      "upstreams": [
-        "geosite/nintendo.list"
-      ]
+      "upstreams": ["geosite/nintendo.list"]
     },
     {
       "name": "game-all",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Game",
       "description": "六大海外游戏平台合集（Epic / EA / Blizzard / Ubisoft / PlayStation / Nintendo）",
       "include_sets": [
         "game-epic",
@@ -273,131 +324,104 @@
     {
       "name": "gamer-with-steam",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Gamer",
       "description": "Steam + 六大海外游戏平台合集（适配 Surge Gamer 策略组）",
-      "include_sets": [
-        "steam",
-        "game-all"
-      ]
+      "include_sets": ["steam", "game-all"]
     },
     {
       "name": "nvidia",
       "type": "domain",
+      "category": "gaming",
+      "default_policy": "Nvidia",
       "description": "Nvidia 全量域名",
-      "upstreams": [
-        "geosite/nvidia.list"
-      ]
+      "upstreams": ["geosite/nvidia.list"]
     },
     {
-      "name": "youtube",
-      "type": "domain",
-      "description": "YouTube 全量域名",
-      "upstreams": [
-        "geosite/youtube.list"
-      ]
+      "name": "telegram-dc1",
+      "type": "ipcidr",
+      "category": "telegram-dc",
+      "default_policy": "美国-智选",
+      "description": "Telegram DC1 / DC3 美东机房（AS59930 官方 IP 段；list 版附带 IP-ASN）",
+      "patches": ["sources/custom/telegram-dc1.ip.txt"],
+      "classical_extra": ["sources/custom/telegram-dc1.asn.txt"]
     },
     {
-      "name": "netflix",
-      "type": "domain",
-      "description": "Netflix 全量域名（classical/surge 版含官方 IP 段）",
-      "upstreams": [
-        "geosite/netflix.list"
-      ],
-      "ip_upstreams": [
-        "geoip/netflix.list"
-      ]
+      "name": "telegram-dc2-4",
+      "type": "ipcidr",
+      "category": "telegram-dc",
+      "default_policy": "欧洲出口",
+      "description": "Telegram DC2 / DC4 欧洲机房（AS62041 / AS211157 官方 IP 段；list 版附带 IP-ASN）",
+      "patches": ["sources/custom/telegram-dc2-4.ip.txt"],
+      "classical_extra": ["sources/custom/telegram-dc2-4.asn.txt"]
     },
     {
-      "name": "disney",
-      "type": "domain",
-      "description": "Disney+ 全量域名",
-      "upstreams": [
-        "geosite/disney.list"
-      ]
+      "name": "telegram-dc5",
+      "type": "ipcidr",
+      "category": "telegram-dc",
+      "default_policy": "新加坡-智选",
+      "description": "Telegram DC5 新加坡机房（AS44907 / AS62014 官方 IP 段；list 版附带 IP-ASN）",
+      "patches": ["sources/custom/telegram-dc5.ip.txt"],
+      "classical_extra": ["sources/custom/telegram-dc5.asn.txt"]
     },
     {
-      "name": "spotify",
+      "name": "forum",
       "type": "domain",
-      "description": "Spotify 全量域名",
-      "upstreams": [
-        "geosite/spotify.list"
-      ]
+      "category": "core",
+      "default_policy": "社区论坛",
+      "description": "通用技术与主机社区论坛（固定出口减少 Cloudflare 验证）",
+      "patches": ["sources/custom/forum.txt"]
     },
     {
-      "name": "tiktok",
+      "name": "cn-direct-extra",
       "type": "domain",
-      "description": "TikTok 国际版全量域名",
-      "upstreams": [
-        "geosite/tiktok.list"
-      ]
+      "category": "core",
+      "default_policy": "DIRECT",
+      "description": "通用国内直连补充（抖音/字节国内 CDN + Steam 国内下载 CDN）",
+      "upstreams": ["geosite/douyin.list"],
+      "patches": ["sources/custom/cn-direct-extra.txt"]
     },
     {
-      "name": "bilibili",
+      "name": "httpdns-block",
       "type": "domain",
-      "description": "BiliBili 全量域名",
-      "upstreams": [
-        "geosite/bilibili.list"
-      ]
+      "category": "core",
+      "default_policy": "REJECT",
+      "description": "国内 App HTTPDNS 解析域名拦截（Mihomo/Surge 通用，不含普通业务域）",
+      "patches": ["sources/custom/httpdns-block.txt"]
     },
     {
-      "name": "china-media",
+      "name": "test-check",
       "type": "domain",
-      "description": "中国大陆主流流媒体域名",
-      "upstreams": [
-        "geosite/category-media-cn.list"
-      ]
+      "category": "core",
+      "default_policy": "Test",
+      "description": "通用 IP / 测速 / DNS 泄露检测域名（干净版，不含 challenges.cloudflare.com）",
+      "patches": ["sources/custom/test-check.txt"]
     },
     {
-      "name": "global-media",
+      "name": "block-adobe",
       "type": "domain",
-      "description": "国际流媒体与娱乐服务合集",
-      "upstreams": [
-        "geosite/category-entertainment.list"
-      ]
-    },
-    {
-      "name": "google",
-      "type": "domain",
-      "description": "Google 全家桶域名（classical/surge 版含 Google IP 段）",
-      "upstreams": [
-        "geosite/google.list"
-      ],
-      "ip_upstreams": [
-        "geoip/google.list"
-      ]
+      "category": "core",
+      "default_policy": "REJECT",
+      "description": "Adobe 验证与遥测域名屏蔽",
+      "patches": ["sources/custom/block-adobe.txt"]
     },
     {
       "name": "global",
       "type": "domain",
+      "category": "core",
+      "default_policy": "日常代理",
       "description": "非中国大陆通用代理域名总集（MetaCubeX geolocation-!cn，Surge 建议使用 DOMAIN-SET）",
-      "upstreams": [
-        "geosite/geolocation-!cn.list"
-      ],
+      "upstreams": ["geosite/geolocation-!cn.list"],
       "skip_classical": true
     },
     {
       "name": "cn",
       "type": "domain",
+      "category": "core",
+      "default_policy": "DIRECT",
       "description": "中国大陆直连域名总集（MetaCubeX cn，Surge 建议使用 DOMAIN-SET）",
-      "upstreams": [
-        "geosite/cn.list"
-      ],
+      "upstreams": ["geosite/cn.list"],
       "skip_classical": true
-    },
-    {
-      "name": "test-check",
-      "type": "domain",
-      "description": "通用 IP / 测速 / DNS 泄露检测域名（干净版，不含 challenges.cloudflare.com）",
-      "patches": [
-        "sources/custom/test-check.txt"
-      ]
-    },
-    {
-      "name": "block-adobe",
-      "type": "domain",
-      "description": "Adobe 验证与遥测域名屏蔽",
-      "patches": [
-        "sources/custom/block-adobe.txt"
-      ]
     }
   ]
 }

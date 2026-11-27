@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>routing-rules — Mihomo &amp; Surge 自维护分流规则集</title>
+  <style>
+    :root {
+      --bg: #f8f9fb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-text: #1d4ed8;
+      --code-bg: #f3f4f6;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .04);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --card: #161b22;
+        --border: #30363d;
+        --text: #e6edf3;
+        --muted: #8b949e;
+        --accent: #58a6ff;
+        --accent-soft: rgba(56, 139, 253, .14);
+        --accent-text: #79c0ff;
+        --code-bg: #0d1117;
+        --green: #3fb950;
+        --green-soft: rgba(63, 185, 80, .14);
+        --shadow: none;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 18px 64px; }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 { margin: 0; font-size: 24px; letter-spacing: -.02em; }
+    .sub { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+    .meta-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .pill strong { color: var(--text); font-weight: 600; }
+    a.pill { text-decoration: none; color: var(--accent-text); border-color: transparent; background: var(--accent-soft); }
+    a.pill:hover { opacity: .88; }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .search-box {
+      flex: 1 1 260px;
+      max-width: 420px;
+      padding: 9px 13px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .search-box:focus { border-color: var(--accent); }
+    .mirror-switch {
+      display: inline-flex;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .mirror-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .mirror-btn.active { background: var(--accent-soft); color: var(--accent-text); }
+
+    .tabs {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tab {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .section-title {
+      margin: 28px 0 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title span { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 15px 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card-name {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+    .badge {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--code-bg);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .badge.green { background: var(--green-soft); color: var(--green); border-color: transparent; }
+    .badge.blue { background: var(--accent-soft); color: var(--accent-text); border-color: transparent; }
+    .desc { font-size: 13px; color: var(--muted); margin: 0; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent-text); }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn.primary:hover { opacity: .9; color: #fff; }
+    details pre {
+      margin: 8px 0 0;
+      padding: 10px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 11px;
+      overflow-x: auto;
+      max-height: 220px;
+      color: var(--text);
+    }
+    details summary { font-size: 12px; color: var(--muted); cursor: pointer; }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #111827;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 99;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>routing-rules</h1>
+        <p class="sub">自维护多端分流规则与 Surge 模块导航 · 每日同步 MetaCubeX 上游与 AI 防串出口补丁</p>
+      </div>
+      <div class="meta-bar" id="stats"></div>
+    </header>
+
+    <div class="controls">
+      <input class="search-box" id="search" type="search" placeholder="搜索规则名、用途或策略（如 claude / telegram / game）..." />
+      <div class="mirror-switch" role="group" aria-label="镜像源切换">
+        <button class="mirror-btn active" data-mirror="jsdelivr">jsDelivr (testingcf)</button>
+        <button class="mirror-btn" data-mirror="raw">GitHub Raw</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+    <main id="content"></main>
+
+    <footer>
+      <span>仅收录公开通用规则与零脚本模块，不含个人私域与节点信息</span>
+      <span>由 GitHub Actions 自动编译发布至 release 分支</span>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">已复制</div>
+
+  <script>
+    const state = {
+      catalog: null,
+      mirror: "jsdelivr",
+      tab: "all",
+      q: "",
+    };
+
+    function baseUrl() {
+      const r = state.catalog.repo;
+      if (state.mirror === "jsdelivr") {
+        return `https://testingcf.jsdelivr.net/gh/${r.owner}/${r.name}@${r.release_branch}/`;
+      }
+      return `https://raw.githubusercontent.com/${r.owner}/${r.name}/${r.release_branch}/`;
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    async function copyText(text, label) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(`已复制：${label}`);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showToast(`已复制：${label}`);
+      }
+    }
+
+    function mihomoSnippet(rs) {
+      const url = baseUrl() + rs.paths.mihomo_mrs;
+      const anchor = rs.type === "ipcidr" ? "*ip" : "*domain";
+      const suffix = rs.type === "ipcidr" ? "IP" : "Domain";
+      const key = `${rs.name} / ${suffix}`;
+      return `${key}: {<<: ${anchor}, url: "${url}"}`;
+    }
+
+    function surgeSnippet(rs) {
+      const policy = rs.defaultPolicy || "Proxy";
+      if (rs.surgeRecommended === "domain-set" && rs.paths.surge_domain_set) {
+        return `DOMAIN-SET,${baseUrl() + rs.paths.surge_domain_set},${policy}`;
+      }
+      const url = baseUrl() + (rs.paths.surge_list || rs.paths.surge_domain_set);
+      const nr = rs.noResolve ? ",no-resolve" : "";
+      return `RULE-SET,${url},${policy}${nr}`;
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
+    }
+
+    function renderStats() {
+      const c = state.catalog;
+      const repoUrl = `https://github.com/${c.repo.owner}/${c.repo.name}`;
+      document.getElementById("stats").innerHTML = `
+        <span class="pill">规则集 <strong>${c.stats.rulesetCount}</strong></span>
+        <span class="pill">模块 <strong>${c.stats.moduleCount}</strong></span>
+        <span class="pill">总条目 <strong>${c.stats.totalEntries.toLocaleString()}</strong></span>
+        <a class="pill" href="${repoUrl}" target="_blank" rel="noopener">GitHub ↗</a>
+      `;
+    }
+
+    function renderTabs() {
+      const items = [
+        { id: "all", label: "全部" },
+        ...state.catalog.categories,
+        { id: "modules", label: "Surge 模块" },
+      ];
+      document.getElementById("tabs").innerHTML = items.map(it =>
+        `<button class="tab ${state.tab === it.id ? "active" : ""}" data-tab="${esc(it.id)}">${esc(it.label)}</button>`
+      ).join("");
+    }
+
+    function matchesQuery(text) {
+      if (!state.q) return true;
+      return text.toLowerCase().includes(state.q.toLowerCase());
+    }
+
+    function render() {
+      const root = document.getElementById("content");
+      const sections = [];
+
+      const showModules = state.tab === "all" || state.tab === "modules";
+      if (showModules) {
+        const mods = state.catalog.modules.filter(m => matchesQuery(`${m.id} ${m.name} ${m.description} ${m.notes}`));
+        if (mods.length) {
+          sections.push(`
+            <div class="section-title">Surge 模块 (.sgmodule) <span>共 ${mods.length} 个 · 零远端 JS</span></div>
+            <div class="grid">
+              ${mods.map(m => {
+                const url = baseUrl() + m.path;
+                const installUrl = `surge:///install-module?url=${encodeURIComponent(url)}`;
+                return `
+                  <article class="card">
+                    <div class="card-head">
+                      <div class="card-name">${esc(m.name)}</div>
+                      <div class="badges">
+                        <span class="badge green">sgmodule</span>
+                        <span class="badge">${m.lineCount} 行</span>
+                      </div>
+                    </div>
+                    <p class="desc">${esc(m.description)}</p>
+                    ${m.notes ? `<p class="desc">${esc(m.notes)}</p>` : ""}
+                    <details>
+                      <summary>查看模块前 24 行预览</summary>
+                      <pre>${esc(m.preview)}</pre>
+                    </details>
+                    <div class="actions">
+                      <a class="btn primary" href="${installUrl}">一键安装到 Surge</a>
+                      <button class="btn" data-copy="${esc(url)}" data-label="${esc(m.name)} 直链">复制模块直链</button>
+                    </div>
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          `);
+        }
+      }
+
+      if (state.tab !== "modules") {
+        const cats = state.tab === "all"
+          ? state.catalog.categories
+          : state.catalog.categories.filter(c => c.id === state.tab);
+
+        for (const cat of cats) {
+          const list = state.catalog.rulesets.filter(rs =>
+            rs.category === cat.id &&
+            matchesQuery(`${rs.name} ${rs.description} ${rs.defaultPolicy} ${rs.type}`)
+          );
+          if (!list.length) continue;
+
+          sections.push(`
+            <div class="section-title">${esc(cat.label)} <span>${list.length} 组</span></div>
+            <div class="grid">
+              ${list.map(rs => {
+                const mrsUrl = baseUrl() + rs.paths.mihomo_mrs;
+                const surgeUrl = baseUrl() + (rs.surgeRecommended === "domain-set" && rs.paths.surge_domain_set ? rs.paths.surge_domain_set : rs.paths.surge_list);
+                const extraBadge = rs.extraEntries ? ` +${rs.extraEntries}` : "";
+                const surgeKind = rs.surgeRecommended === "domain-set" ? "DOMAIN-SET" : "RULE-SET";
+                return `
+                  <article class="card">
+                    <div class="card-head">
+                      <div class="card-name">${esc(rs.name)}</div>
+                      <div class="badges">
+                        <span class="badge blue">${esc(rs.type)}</span>
+                        <span class="badge">${rs.entries.toLocaleString()}${extraBadge}</span>
+                      </div>
+                    </div>
+                    <p class="desc">${esc(rs.description)}</p>
+                    <div class="actions">
+                      <button class="btn primary" data-copy="${esc(surgeSnippet(rs))}" data-label="Surge ${surgeKind} (${rs.name})">复制 Surge ${surgeKind}</button>
+                      <button class="btn" data-copy="${esc(mihomoSnippet(rs))}" data-label="Mihomo provider (${rs.name})">复制 Mihomo</button>
+                      <button class="btn" data-copy="${esc(mrsUrl)}" data-label="${rs.name}.mrs 直链">.mrs</button>
+                      ${rs.paths.surge_list ? `<button class="btn" data-copy="${esc(baseUrl() + rs.paths.surge_list)}" data-label="${rs.name}.list 直链">.list</button>` : `<button class="btn" data-copy="${esc(surgeUrl)}" data-label="${rs.name}.txt 直链">.txt</button>`}
+                    </div>
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          `);
+        }
+      }
+
+      root.innerHTML = sections.length
+        ? sections.join("")
+        : `<p class="desc" style="margin-top:24px;">没有匹配的规则集或模块。</p>`;
+    }
+
+    document.addEventListener("click", e => {
+      const tabBtn = e.target.closest("[data-tab]");
+      if (tabBtn) {
+        state.tab = tabBtn.dataset.tab;
+        renderTabs();
+        render();
+        return;
+      }
+      const mirBtn = e.target.closest("[data-mirror]");
+      if (mirBtn) {
+        state.mirror = mirBtn.dataset.mirror;
+        document.querySelectorAll(".mirror-btn").forEach(b => b.classList.toggle("active", b.dataset.mirror === state.mirror));
+        render();
+        return;
+      }
+      const cpBtn = e.target.closest("[data-copy]");
+      if (cpBtn) {
+        copyText(cpBtn.dataset.copy, cpBtn.dataset.label || "链接");
+      }
+    });
+
+    document.getElementById("search").addEventListener("input", e => {
+      state.q = e.target.value.trim();
+      render();
+    });
+
+    fetch("./catalog.json", { cache: "no-cache" })
+      .then(r => r.json())
+      .then(data => {
+        state.catalog = data;
+        renderStats();
+        renderTabs();
+        render();
+      })
+      .catch(err => {
+        document.getElementById("content").innerHTML = `<p class="desc">加载 catalog.json 失败：${esc(err)}</p>`;
+      });
+  </script>
+</body>
+</html>

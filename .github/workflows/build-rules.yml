@@ -8,6 +8,7 @@ on:
       - "manifest.json"
       - "sources/**"
       - "scripts/**"
+      - "site/**"
       - ".github/workflows/build-rules.yml"
   schedule:
     # Daily at 04:00 UTC+8 (20:00 UTC)

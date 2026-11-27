@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic rule builder: merge MetaCubeX upstreams with local patches and compile .mrs/.list/DOMAIN-SET."""
+"""Deterministic rule builder: merge MetaCubeX upstreams with local patches and compile .mrs/.list/DOMAIN-SET/catalog."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def fetch_text(url: str, retries: int = 3) -> str:
         try:
             req = urllib.request.Request(
                 url,
-                headers={"User-Agent": "w0ven-routing-rules-builder/1.1"},
+                headers={"User-Agent": "w0ven-routing-rules-builder/1.2"},
             )
             with urllib.request.urlopen(req, timeout=30) as resp:
                 return resp.read().decode("utf-8", errors="replace")
@@ -93,7 +93,6 @@ def domain_to_classical(entry: str) -> str:
 
 
 def domain_to_surge_domain_set(entry: str) -> str:
-    # Surge DOMAIN-SET syntax: leading dot '.example.com' matches root + subdomains; bare 'example.com' is exact
     if entry.startswith("+."):
         return f".{entry[2:]}"
     return entry
@@ -137,6 +136,18 @@ def compile_mrs(mihomo_bin: str, behavior: str, src: Path, dst: Path) -> None:
         )
 
 
+def parse_sgmodule_meta(text: str) -> dict[str, str]:
+    meta: dict[str, str] = {}
+    for line in text.splitlines():
+        s = line.strip()
+        if s.startswith("#!") and "=" in s:
+            k, v = s[2:].split("=", 1)
+            meta[k.strip()] = v.strip()
+        elif s and not s.startswith("#"):
+            break
+    return meta
+
+
 def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
     manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
     upstream_base: str = manifest["upstream_base"]
@@ -157,15 +168,19 @@ def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
     cls_dir = out_dir / "mihomo" / "classical"
     surge_dir = out_dir / "surge"
     surge_dset_dir = surge_dir / "domain-set"
-    for d in (dom_dir, ip_dir, cls_dir, surge_dir, surge_dset_dir):
+    surge_mod_dir = surge_dir / "modules"
+    for d in (dom_dir, ip_dir, cls_dir, surge_dir, surge_dset_dir, surge_mod_dir):
         d.mkdir(parents=True, exist_ok=True)
 
     built_entries: dict[str, set[str]] = {}
     summary_rows: list[tuple[str, str, int, int, str]] = []
+    catalog_rulesets: list[dict[str, object]] = []
 
     for spec in manifest["rulesets"]:
         name: str = spec["name"]
         rtype: str = spec["type"]
+        category: str = spec.get("category", "core")
+        default_policy: str = spec.get("default_policy", "Proxy")
         desc: str = spec.get("description", "")
         skip_classical: bool = bool(spec.get("skip_classical", False))
 
@@ -216,19 +231,24 @@ def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
                 if cleaned:
                     classical_extra.append(cleaned)
 
+        paths: dict[str, str] = {}
+        has_extra_rules = bool(extra_ips or classical_extra)
+
         if rtype == "domain":
             ordered = sort_domains(items)
             txt_path = dom_dir / f"{name}.txt"
             txt_path.write_text("\n".join(ordered) + "\n", encoding="utf-8")
+            paths["mihomo_txt"] = f"mihomo/domain/{name}.txt"
 
-            # Always generate Surge native DOMAIN-SET (.txt) for O(1) fast matching
             dset_lines = [domain_to_surge_domain_set(x) for x in ordered]
             (surge_dset_dir / f"{name}.txt").write_text(
                 "\n".join(dset_lines) + "\n", encoding="utf-8"
             )
+            paths["surge_domain_set"] = f"surge/domain-set/{name}.txt"
 
             if mihomo_bin:
                 compile_mrs(mihomo_bin, "domain", txt_path, dom_dir / f"{name}.mrs")
+            paths["mihomo_mrs"] = f"mihomo/domain/{name}.mrs"
 
             ordered_ips = sort_cidrs(extra_ips)
             if not skip_classical:
@@ -241,37 +261,121 @@ def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
                 classical_body = "\n".join(classical_lines) + "\n"
                 (cls_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
                 (surge_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
-            summary_rows.append((name, "domain", len(ordered), len(ordered_ips), desc))
+                paths["classical_list"] = f"mihomo/classical/{name}.list"
+                paths["surge_list"] = f"surge/{name}.list"
+
+            summary_rows.append((name, "domain", len(ordered), len(ordered_ips) + len(classical_extra), desc))
+            surge_recommended = "rule-set" if (has_extra_rules and not skip_classical) else "domain-set"
+            catalog_rulesets.append({
+                "name": name,
+                "type": "domain",
+                "category": category,
+                "defaultPolicy": default_policy,
+                "description": desc,
+                "entries": len(ordered),
+                "extraEntries": len(ordered_ips) + len(classical_extra),
+                "noResolve": bool(ordered_ips or any("IP-" in x.upper() for x in classical_extra)),
+                "surgeRecommended": surge_recommended,
+                "paths": paths,
+            })
         elif rtype == "ipcidr":
             ordered = sort_cidrs(items)
             txt_path = ip_dir / f"{name}.txt"
             txt_path.write_text("\n".join(ordered) + "\n", encoding="utf-8")
+            paths["mihomo_txt"] = f"mihomo/ip/{name}.txt"
 
             if mihomo_bin:
                 compile_mrs(mihomo_bin, "ipcidr", txt_path, ip_dir / f"{name}.mrs")
+            paths["mihomo_mrs"] = f"mihomo/ip/{name}.mrs"
 
             if not skip_classical:
                 classical_lines = [ipcidr_to_classical(x) for x in ordered]
+                for extra in classical_extra:
+                    if extra not in classical_lines:
+                        classical_lines.append(extra)
                 classical_body = "\n".join(classical_lines) + "\n"
                 (cls_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
                 (surge_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
-            summary_rows.append((name, "ipcidr", len(ordered), 0, desc))
+                paths["classical_list"] = f"mihomo/classical/{name}.list"
+                paths["surge_list"] = f"surge/{name}.list"
+
+            summary_rows.append((name, "ipcidr", len(ordered), len(classical_extra), desc))
+            catalog_rulesets.append({
+                "name": name,
+                "type": "ipcidr",
+                "category": category,
+                "defaultPolicy": default_policy,
+                "description": desc,
+                "entries": len(ordered),
+                "extraEntries": len(classical_extra),
+                "noResolve": True,
+                "surgeRecommended": "rule-set",
+                "paths": paths,
+            })
         else:
             raise ValueError(f"Unsupported ruleset type: {rtype}")
 
-        ip_note = f" (+{len(extra_ips)} IPs)" if extra_ips else ""
-        print(f"[built] {name:<20} ({rtype:<6}) -> {len(ordered)} entries{ip_note}")
+        extra_cnt = len(extra_ips) + len(classical_extra)
+        note = f" (+{extra_cnt} extra)" if extra_cnt else ""
+        print(f"[built] {name:<20} ({rtype:<6}) -> {len(ordered)} entries{note}")
 
+    # Copy & index Surge modules
+    catalog_modules: list[dict[str, object]] = []
+    for mod in manifest.get("modules", []):
+        src = ROOT / mod["source"]
+        text = src.read_text(encoding="utf-8")
+        dst = surge_mod_dir / mod["filename"]
+        dst.write_text(text, encoding="utf-8")
+        meta = parse_sgmodule_meta(text)
+        lines_list = text.splitlines()
+        catalog_modules.append({
+            "id": mod["id"],
+            "name": meta.get("name", mod["id"]),
+            "description": meta.get("desc", ""),
+            "category": meta.get("category", "模块"),
+            "version": meta.get("version", ""),
+            "notes": mod.get("notes", ""),
+            "path": f"surge/modules/{mod['filename']}",
+            "lineCount": len(lines_list),
+            "sizeBytes": len(text.encode("utf-8")),
+            "preview": "\n".join(lines_list[:24]),
+        })
+        print(f"[module] {mod['id']:<19} -> surge/modules/{mod['filename']} ({len(lines_list)} lines)")
+
+    # Write deterministic SUMMARY.md
     lines = [
         "# Built Rulesets Summary",
         "",
-        "| Ruleset | Type | Entries | Extra IPs (List) | Description |",
+        "| Ruleset | Type | Entries | Extra Rules (List) | Description |",
         "|---|---:|---:|---:|---|",
     ]
-    for name, rtype, count, ip_cnt, desc in summary_rows:
-        lines.append(f"| `{name}` | `{rtype}` | {count} | {ip_cnt} | {desc} |")
+    for name, rtype, count, extra_cnt, desc in summary_rows:
+        lines.append(f"| `{name}` | `{rtype}` | {count} | {extra_cnt} | {desc} |")
     lines.append("")
     (out_dir / "SUMMARY.md").write_text("\n".join(lines), encoding="utf-8")
+
+    # Write deterministic catalog.json for static navigation site
+    catalog = {
+        "repo": manifest.get("repo", {"owner": "w0ven", "name": "routing-rules", "release_branch": "release"}),
+        "categories": manifest.get("categories", []),
+        "stats": {
+            "rulesetCount": len(catalog_rulesets),
+            "moduleCount": len(catalog_modules),
+            "totalEntries": sum(int(r["entries"]) for r in catalog_rulesets),
+        },
+        "modules": catalog_modules,
+        "rulesets": catalog_rulesets,
+    }
+    (out_dir / "catalog.json").write_text(
+        json.dumps(catalog, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    # Copy static site & .nojekyll for GitHub Pages on release branch
+    site_index = ROOT / "site" / "index.html"
+    if site_index.exists():
+        shutil.copyfile(site_index, out_dir / "index.html")
+    (out_dir / ".nojekyll").write_text("", encoding="utf-8")
 
 
 def main() -> int:
