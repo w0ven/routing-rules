@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
-"""Deterministic rule builder: merge MetaCubeX upstreams with local patches and compile .mrs/.list."""
+"""Deterministic rule builder: merge MetaCubeX upstreams with local patches and compile .mrs/.list/DOMAIN-SET."""
 
 from __future__ import annotations
 
 import argparse
 import ipaddress
 import json
-import os
 import shutil
 import subprocess
 import sys
 import time
-import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -25,9 +23,9 @@ def fetch_text(url: str, retries: int = 3) -> str:
         try:
             req = urllib.request.Request(
                 url,
-                headers={"User-Agent": "w0ven-routing-rules-builder/1.0"},
+                headers={"User-Agent": "w0ven-routing-rules-builder/1.1"},
             )
-            with urllib.request.urlopen(req, timeout=20) as resp:
+            with urllib.request.urlopen(req, timeout=30) as resp:
                 return resp.read().decode("utf-8", errors="replace")
         except Exception as exc:  # noqa: BLE001
             last_err = exc
@@ -60,7 +58,6 @@ def normalize_domain_entry(raw: str) -> str | None:
         dom = line.split(",", 2)[1].strip().lower().lstrip(".")
         return dom if dom else None
     if "," in line:
-        # Ignore non-domain classical rules (e.g., DOMAIN-KEYWORD / IP-CIDR) in domain text output
         return None
 
     dom = line.lower()
@@ -95,6 +92,13 @@ def domain_to_classical(entry: str) -> str:
     return f"DOMAIN,{entry}"
 
 
+def domain_to_surge_domain_set(entry: str) -> str:
+    # Surge DOMAIN-SET syntax: leading dot '.example.com' matches root + subdomains; bare 'example.com' is exact
+    if entry.startswith("+."):
+        return f".{entry[2:]}"
+    return entry
+
+
 def ipcidr_to_classical(entry: str) -> str:
     net = ipaddress.ip_network(entry, strict=False)
     kind = "IP-CIDR6" if net.version == 6 else "IP-CIDR"
@@ -102,7 +106,6 @@ def ipcidr_to_classical(entry: str) -> str:
 
 
 def sort_domains(entries: set[str]) -> list[str]:
-    # Deterministic sort by reversed domain labels, suffix entries before exact
     def key(item: str) -> tuple[list[str], int, str]:
         is_suffix = item.startswith("+.")
         host = item[2:] if is_suffix else item
@@ -153,18 +156,21 @@ def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
     ip_dir = out_dir / "mihomo" / "ip"
     cls_dir = out_dir / "mihomo" / "classical"
     surge_dir = out_dir / "surge"
-    for d in (dom_dir, ip_dir, cls_dir, surge_dir):
+    surge_dset_dir = surge_dir / "domain-set"
+    for d in (dom_dir, ip_dir, cls_dir, surge_dir, surge_dset_dir):
         d.mkdir(parents=True, exist_ok=True)
 
     built_entries: dict[str, set[str]] = {}
-    summary_rows: list[tuple[str, str, int, str]] = []
+    summary_rows: list[tuple[str, str, int, int, str]] = []
 
     for spec in manifest["rulesets"]:
         name: str = spec["name"]
         rtype: str = spec["type"]
         desc: str = spec.get("description", "")
+        skip_classical: bool = bool(spec.get("skip_classical", False))
 
         items: set[str] = set()
+        extra_ips: set[str] = set()
 
         for inc in spec.get("include_sets", []):
             if inc not in built_entries:
@@ -195,6 +201,12 @@ def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
                 if norm:
                     items.discard(norm)
 
+        for ip_up in spec.get("ip_upstreams", []):
+            for line in get_upstream(ip_up):
+                norm_ip = normalize_ipcidr_entry(line)
+                if norm_ip:
+                    extra_ips.add(norm_ip)
+
         built_entries[name] = set(items)
 
         classical_extra: list[str] = []
@@ -209,17 +221,27 @@ def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
             txt_path = dom_dir / f"{name}.txt"
             txt_path.write_text("\n".join(ordered) + "\n", encoding="utf-8")
 
+            # Always generate Surge native DOMAIN-SET (.txt) for O(1) fast matching
+            dset_lines = [domain_to_surge_domain_set(x) for x in ordered]
+            (surge_dset_dir / f"{name}.txt").write_text(
+                "\n".join(dset_lines) + "\n", encoding="utf-8"
+            )
+
             if mihomo_bin:
                 compile_mrs(mihomo_bin, "domain", txt_path, dom_dir / f"{name}.mrs")
 
-            classical_lines = [domain_to_classical(x) for x in ordered]
-            for extra in classical_extra:
-                if extra not in classical_lines:
-                    classical_lines.append(extra)
-            classical_body = "\n".join(classical_lines) + "\n"
-            (cls_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
-            (surge_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
-            summary_rows.append((name, "domain", len(ordered), desc))
+            ordered_ips = sort_cidrs(extra_ips)
+            if not skip_classical:
+                classical_lines = [domain_to_classical(x) for x in ordered]
+                for cidr in ordered_ips:
+                    classical_lines.append(ipcidr_to_classical(cidr))
+                for extra in classical_extra:
+                    if extra not in classical_lines:
+                        classical_lines.append(extra)
+                classical_body = "\n".join(classical_lines) + "\n"
+                (cls_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
+                (surge_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
+            summary_rows.append((name, "domain", len(ordered), len(ordered_ips), desc))
         elif rtype == "ipcidr":
             ordered = sort_cidrs(items)
             txt_path = ip_dir / f"{name}.txt"
@@ -228,25 +250,26 @@ def build_all(out_dir: Path, mihomo_bin: str | None) -> None:
             if mihomo_bin:
                 compile_mrs(mihomo_bin, "ipcidr", txt_path, ip_dir / f"{name}.mrs")
 
-            classical_lines = [ipcidr_to_classical(x) for x in ordered]
-            classical_body = "\n".join(classical_lines) + "\n"
-            (cls_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
-            (surge_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
-            summary_rows.append((name, "ipcidr", len(ordered), desc))
+            if not skip_classical:
+                classical_lines = [ipcidr_to_classical(x) for x in ordered]
+                classical_body = "\n".join(classical_lines) + "\n"
+                (cls_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
+                (surge_dir / f"{name}.list").write_text(classical_body, encoding="utf-8")
+            summary_rows.append((name, "ipcidr", len(ordered), 0, desc))
         else:
             raise ValueError(f"Unsupported ruleset type: {rtype}")
 
-        print(f"[built] {name:<18} ({rtype:<6}) -> {len(ordered)} entries")
+        ip_note = f" (+{len(extra_ips)} IPs)" if extra_ips else ""
+        print(f"[built] {name:<20} ({rtype:<6}) -> {len(ordered)} entries{ip_note}")
 
-    # Deterministic summary (no timestamp so release branch commits only on real diffs)
     lines = [
         "# Built Rulesets Summary",
         "",
-        "| Ruleset | Type | Entries | Description |",
-        "|---|---:|---:|---|",
+        "| Ruleset | Type | Entries | Extra IPs (List) | Description |",
+        "|---|---:|---:|---:|---|",
     ]
-    for name, rtype, count, desc in summary_rows:
-        lines.append(f"| `{name}` | `{rtype}` | {count} | {desc} |")
+    for name, rtype, count, ip_cnt, desc in summary_rows:
+        lines.append(f"| `{name}` | `{rtype}` | {count} | {ip_cnt} | {desc} |")
     lines.append("")
     (out_dir / "SUMMARY.md").write_text("\n".join(lines), encoding="utf-8")
 

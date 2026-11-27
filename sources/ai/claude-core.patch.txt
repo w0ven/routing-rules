@@ -17,7 +17,14 @@
 +.claudeacademy.com
 +.claudestudio.com
 +.chatbotclaude.com
+anthropic.auth0.com
+anthropic.com.cdn.cloudflare.net
++.modelcontextprotocol.io
++.modelcontextprotocol.org
++.modelcontextprotocol.com
++.modelcontextprotocol.net
 anthropic-com.ghost.io
+cdn.growthbook.io
 http-intake.logs.us5.datadoghq.com
 browser-intake-us5-datadoghq.com
 cdn.usefathom.com

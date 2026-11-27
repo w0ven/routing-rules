@@ -1,4 +1,4 @@
-# Claude 全量补丁（基于 aiip.si/routing/ 与实际抓包整理，与 MetaCubeX/geosite/anthropic 合并）
+# Claude 全量补丁（基于 aiip.si/routing/、Reukix 精选补充与实际抓包整理，与 MetaCubeX/geosite/anthropic 合并）
 # 语法：
 #   +.example.com  -> 匹配 example.com 及所有子域名（DOMAIN-SUFFIX）
 #   example.com    -> 仅精确匹配该域名（DOMAIN）
@@ -22,6 +22,12 @@
 +.claudeacademy.com
 +.claudestudio.com
 +.chatbotclaude.com
+anthropic.auth0.com
+anthropic.com.cdn.cloudflare.net
++.modelcontextprotocol.io
++.modelcontextprotocol.org
++.modelcontextprotocol.com
++.modelcontextprotocol.net
 
 # 登录与第三方服务（保证登录、帮助中心与主站同一出口）
 +.intercom.io
@@ -30,9 +36,11 @@
 accounts.google.com
 anthropic-com.ghost.io
 
-# 监控与统计（避免遥测/报错上报串出口）
+# 监控、特性开关与统计（避免遥测/报错上报串出口）
 +.sentry.io
 +.statsigapi.net
++.api.statsig.com
+cdn.growthbook.io
 +.datadoghq.com
 +.datadoghq.eu
 http-intake.logs.us5.datadoghq.com

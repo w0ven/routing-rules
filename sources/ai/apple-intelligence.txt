@@ -1,0 +1,7 @@
+# Apple Intelligence / Private Cloud Compute 专用域名（不含普通 iCloud，避免污染日常苹果流量）
++.apple-relay.apple.com
++.apple-relay.cloudflare.com
++.apple-relay.fastly-edge.com
++.cp4.cloudflare.com
++.guzzoni.apple.com
+gspe1-ssl.ls.apple.com

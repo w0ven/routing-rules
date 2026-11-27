@@ -57,9 +57,17 @@
       ]
     },
     {
+      "name": "apple-intelligence",
+      "type": "domain",
+      "description": "Apple Intelligence 专用域名（不含普通 iCloud）",
+      "patches": [
+        "sources/ai/apple-intelligence.txt"
+      ]
+    },
+    {
       "name": "ai-other",
       "type": "domain",
-      "description": "其他海外 AI 服务（Perplexity / xAI Grok / Meta AI / Cursor / OpenRouter / Midjourney 等）",
+      "description": "其他海外 AI 服务（Perplexity / xAI Grok / Meta AI / Copilot / Cursor / Windsurf / Groq / Suno / HuggingFace 等）",
       "upstreams": [
         "geosite/perplexity.list",
         "geosite/xai.list"
@@ -69,14 +77,23 @@
       ]
     },
     {
+      "name": "intelligence",
+      "type": "domain",
+      "description": "Apple Intelligence + 其他海外 AI 合集（适配 Surge Intelligence 策略组）",
+      "include_sets": [
+        "apple-intelligence",
+        "ai-other"
+      ]
+    },
+    {
       "name": "ai-all",
       "type": "domain",
-      "description": "全部海外 AI 合集（Claude + ChatGPT + Gemini + 其他 AI + MetaCubeX category-ai-!cn）",
+      "description": "全部海外 AI 合集（Claude + ChatGPT + Gemini + Intelligence + MetaCubeX category-ai-!cn）",
       "include_sets": [
         "claude",
         "chatgpt",
         "gemini",
-        "ai-other"
+        "intelligence"
       ],
       "upstreams": [
         "geosite/category-ai-!cn.list"
@@ -108,9 +125,94 @@
       ]
     },
     {
+      "name": "speedtest",
+      "type": "domain",
+      "description": "Ookla Speedtest 测速域名",
+      "upstreams": [
+        "geosite/ookla-speedtest.list"
+      ]
+    },
+    {
+      "name": "apple-cn",
+      "type": "domain",
+      "description": "Apple 国内直连服务域名",
+      "upstreams": [
+        "geosite/apple-cn.list"
+      ]
+    },
+    {
+      "name": "apple",
+      "type": "domain",
+      "description": "Apple 全部服务域名",
+      "upstreams": [
+        "geosite/apple.list"
+      ]
+    },
+    {
+      "name": "github",
+      "type": "domain",
+      "description": "GitHub 全量域名",
+      "upstreams": [
+        "geosite/github.list"
+      ]
+    },
+    {
+      "name": "microsoft",
+      "type": "domain",
+      "description": "Microsoft 全量域名",
+      "upstreams": [
+        "geosite/microsoft.list"
+      ]
+    },
+    {
+      "name": "telegram",
+      "type": "domain",
+      "description": "Telegram 全量域名（classical/surge 版含官方 IP 段）",
+      "upstreams": [
+        "geosite/telegram.list"
+      ],
+      "ip_upstreams": [
+        "geoip/telegram.list"
+      ]
+    },
+    {
+      "name": "twitter",
+      "type": "domain",
+      "description": "X / Twitter 全量域名",
+      "upstreams": [
+        "geosite/x.list"
+      ]
+    },
+    {
+      "name": "discord",
+      "type": "domain",
+      "description": "Discord 全量域名",
+      "upstreams": [
+        "geosite/discord.list"
+      ]
+    },
+    {
+      "name": "crypto",
+      "type": "domain",
+      "description": "主流加密货币交易所（OKX / Binance / Bybit）",
+      "upstreams": [
+        "geosite/okx.list",
+        "geosite/binance.list",
+        "geosite/bybit.list"
+      ]
+    },
+    {
+      "name": "steam",
+      "type": "domain",
+      "description": "Steam 平台域名",
+      "upstreams": [
+        "geosite/steam.list"
+      ]
+    },
+    {
       "name": "game-epic",
       "type": "domain",
-      "description": "Epic Games（替代停更的 blackmatrix7 Epic.list）",
+      "description": "Epic Games",
       "upstreams": [
         "geosite/epicgames.list"
       ]
@@ -118,7 +220,7 @@
     {
       "name": "game-ea",
       "type": "domain",
-      "description": "EA Games（替代停更的 blackmatrix7 EA.list）",
+      "description": "EA Games",
       "upstreams": [
         "geosite/ea.list"
       ]
@@ -126,7 +228,7 @@
     {
       "name": "game-blizzard",
       "type": "domain",
-      "description": "Blizzard（替代停更的 blackmatrix7 Blizzard.list）",
+      "description": "Blizzard",
       "upstreams": [
         "geosite/blizzard.list"
       ]
@@ -134,7 +236,7 @@
     {
       "name": "game-ubisoft",
       "type": "domain",
-      "description": "Ubisoft（替代停更的 blackmatrix7 UBI.list）",
+      "description": "Ubisoft",
       "upstreams": [
         "geosite/ubisoft.list"
       ]
@@ -142,7 +244,7 @@
     {
       "name": "game-playstation",
       "type": "domain",
-      "description": "PlayStation（替代停更的 blackmatrix7 PlayStation.list）",
+      "description": "PlayStation",
       "upstreams": [
         "geosite/playstation.list"
       ]
@@ -150,7 +252,7 @@
     {
       "name": "game-nintendo",
       "type": "domain",
-      "description": "Nintendo（替代停更的 blackmatrix7 Nintendo.list）",
+      "description": "Nintendo",
       "upstreams": [
         "geosite/nintendo.list"
       ]
@@ -169,12 +271,117 @@
       ]
     },
     {
+      "name": "gamer-with-steam",
+      "type": "domain",
+      "description": "Steam + 六大海外游戏平台合集（适配 Surge Gamer 策略组）",
+      "include_sets": [
+        "steam",
+        "game-all"
+      ]
+    },
+    {
       "name": "nvidia",
       "type": "domain",
-      "description": "Nvidia（替代停更的 blackmatrix7 Nvidia.list）",
+      "description": "Nvidia 全量域名",
       "upstreams": [
         "geosite/nvidia.list"
       ]
+    },
+    {
+      "name": "youtube",
+      "type": "domain",
+      "description": "YouTube 全量域名",
+      "upstreams": [
+        "geosite/youtube.list"
+      ]
+    },
+    {
+      "name": "netflix",
+      "type": "domain",
+      "description": "Netflix 全量域名（classical/surge 版含官方 IP 段）",
+      "upstreams": [
+        "geosite/netflix.list"
+      ],
+      "ip_upstreams": [
+        "geoip/netflix.list"
+      ]
+    },
+    {
+      "name": "disney",
+      "type": "domain",
+      "description": "Disney+ 全量域名",
+      "upstreams": [
+        "geosite/disney.list"
+      ]
+    },
+    {
+      "name": "spotify",
+      "type": "domain",
+      "description": "Spotify 全量域名",
+      "upstreams": [
+        "geosite/spotify.list"
+      ]
+    },
+    {
+      "name": "tiktok",
+      "type": "domain",
+      "description": "TikTok 国际版全量域名",
+      "upstreams": [
+        "geosite/tiktok.list"
+      ]
+    },
+    {
+      "name": "bilibili",
+      "type": "domain",
+      "description": "BiliBili 全量域名",
+      "upstreams": [
+        "geosite/bilibili.list"
+      ]
+    },
+    {
+      "name": "china-media",
+      "type": "domain",
+      "description": "中国大陆主流流媒体域名",
+      "upstreams": [
+        "geosite/category-media-cn.list"
+      ]
+    },
+    {
+      "name": "global-media",
+      "type": "domain",
+      "description": "国际流媒体与娱乐服务合集",
+      "upstreams": [
+        "geosite/category-entertainment.list"
+      ]
+    },
+    {
+      "name": "google",
+      "type": "domain",
+      "description": "Google 全家桶域名（classical/surge 版含 Google IP 段）",
+      "upstreams": [
+        "geosite/google.list"
+      ],
+      "ip_upstreams": [
+        "geoip/google.list"
+      ]
+    },
+    {
+      "name": "global",
+      "type": "domain",
+      "description": "非中国大陆通用代理域名总集（MetaCubeX geolocation-!cn，Surge 建议使用 DOMAIN-SET）",
+      "upstreams": [
+        "geosite/geolocation-!cn.list"
+      ],
+      "skip_classical": true
+    },
+    {
+      "name": "cn",
+      "type": "domain",
+      "description": "中国大陆直连域名总集（MetaCubeX cn，Surge 建议使用 DOMAIN-SET）",
+      "upstreams": [
+        "geosite/cn.list"
+      ],
+      "skip_classical": true
     },
     {
       "name": "test-check",
